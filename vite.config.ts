@@ -1,14 +1,14 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: './',
+  base: '/saba-mitzuyar-levels/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
     rollupOptions: {
       output: {
-        manualChunks: {
-          phaser: ['phaser']
+        manualChunks(id) {
+          if (id.includes('phaser')) return 'phaser';
         }
       }
     }

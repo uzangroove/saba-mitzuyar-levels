@@ -20,12 +20,25 @@ export class IntroScene extends Phaser.Scene {
     // Black background
     this.add.rectangle(W/2, H/2, W, H, 0x000000);
 
-    // Try to play video
+    // Try to play video — setDisplaySize after 'created' so dimensions are known
     const vid = this.add.video(W/2, H/2, 'intro_video');
     if (vid) {
-      vid.setDisplaySize(W, H);
+      const fitVideo = () => {
+        vid.setDisplaySize(W, H);
+        vid.setPosition(W / 2, H / 2);
+      };
+      vid.on('created', fitVideo);
+      vid.on('play', fitVideo);   // second safety net
       vid.play(false);
       vid.on('complete', () => this.goToMenu());
+
+      // Also apply via the underlying HTML video element's CSS
+      const el = vid.video as HTMLVideoElement | null;
+      if (el) {
+        el.style.objectFit = 'fill';
+        el.style.width  = `${W}px`;
+        el.style.height = `${H}px`;
+      }
     }
 
     // Skip text

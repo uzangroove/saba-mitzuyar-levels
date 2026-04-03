@@ -224,37 +224,43 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   // ============================================================
-  // TITLE — rainbow coloured, subtitle in purple
+  // TITLE — rainbow per-letter, correct Hebrew RTL order
   // ============================================================
   private buildTitle(W: number, H: number): void {
     void H;
-    // Each letter of "סבא מצוייר" gets a different colour
-    const letters   = ['ר', 'י', 'י', 'ו', 'צ', 'מ', ' ', 'א', 'ב', 'ס'];
-    const colours   = ['#E53935','#FB8C00','#FDD835','#43A047','#00ACC1','#1E88E5','#ffffff','#8E24AA','#D81B60','#F4511E'];
-    const startX    = W * 0.5 + 220;   // right-to-left: start from right
-    const titleY    = 52;
-    const letterW   = 48;
+    // Hebrew "סבא מצוייר" in visual left→right screen order is: ר י י ו צ מ [gap] א ב ס
+    // So we place ס at rightmost (startX) and ר at leftmost (startX - 9*lw)
+    // Array index 0 = first letter 'ס' = rightmost position
+    const letters = ['ס', 'ב', 'א', ' ', 'מ', 'צ', 'ו', 'י', 'י', 'ר'];
+    const colours = ['#F4511E','#D81B60','#8E24AA','','#1E88E5','#00ACC1','#43A047','#FDD835','#FB8C00','#E53935'];
+    const lw      = 46;
+    // Centre the title in the non-castle area (roughly x 280–760)
+    const titleCx = 500;
+    const totalW  = 9 * lw;          // 9 letter slots (space skipped visually)
+    const startX  = titleCx + totalW / 2;   // rightmost letter x
+    const titleY  = 56;
 
     letters.forEach((ch, i) => {
       if (ch === ' ') return;
-      this.add.text(startX - i * letterW, titleY, ch, {
-        fontSize: '58px',
+      this.add.text(startX - i * lw, titleY, ch, {
+        fontSize: '60px',
         fontFamily: 'Arial Black, Arial',
         color: colours[i],
         stroke: '#FFFFFF',
-        strokeThickness: 5,
+        strokeThickness: 6,
+        shadow: { offsetX: 2, offsetY: 3, color: '#00000044', blur: 4, fill: true },
       }).setOrigin(0.5).setDepth(8);
     });
 
-    // Subtitle "להציל את סבתא רבקה"
-    this.add.text(W / 2 + 60, titleY + 68, 'להציל את סבתא רבקה', {
+    // Subtitle — rtl: true makes Phaser render Hebrew words in correct RTL order
+    this.add.text(titleCx, titleY + 72, 'להציל את סבתא רבקה', {
       fontSize: '22px',
       fontFamily: 'Arial Black, Arial',
       color: '#7B1FA2',
       stroke: '#FFFFFF',
       strokeThickness: 4,
       rtl: true,
-    }).setOrigin(0.5).setDepth(8);
+    }).setOrigin(0.5, 0).setDepth(8);
   }
 
   // ============================================================

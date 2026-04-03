@@ -53,6 +53,7 @@ export class GameScene extends Phaser.Scene {
   private coinsCollected: number = 0;
   private isTransitioning: boolean = false;
   private lives: number = 3;
+  private godMode: boolean = false;
   private bossDefeated: boolean = false;
   private worldKey: string = 'earth';
 
@@ -165,6 +166,22 @@ export class GameScene extends Phaser.Scene {
 
     // Ambient particles
     this.startAmbientParticles();
+
+    // O key = skip to next level
+    this.input.keyboard!.on('keydown-O', () => {
+      this.completeLevel();
+    });
+
+    // G key = toggle God Mode (no damage, unlimited lives)
+    this.input.keyboard!.on('keydown-G', () => {
+      this.godMode = !this.godMode;
+      const msg = this.godMode ? '✨ GOD MODE ON' : 'God Mode OFF';
+      this.hudScene?.showMessage(msg, this.godMode ? '#FFD700' : '#AAAAAA', 2000);
+      if (this.godMode) {
+        this.player.health = this.player.maxHealth;
+        this.hudScene?.updateHealth(this.player.health, this.player.maxHealth);
+      }
+    });
 
     // Debug: Shift+K = skip level
     this.input.keyboard!.on('keydown-K', () => {
@@ -1037,6 +1054,7 @@ export class GameScene extends Phaser.Scene {
   // ============================================================
 
   private playerTakeDamage(): void {
+    if (this.godMode) return;
     this.player.takeDamage(1);
     this.hudScene?.updateHealth(this.player.health, this.player.maxHealth);
     this.cameras.main.shake(120, 0.006);
@@ -1126,10 +1144,11 @@ export class GameScene extends Phaser.Scene {
     const pitThreshold = this.scale.height + 120;
     if (this.player && this.player.y > pitThreshold && !this.isTransitioning) {
       this.isTransitioning = true;
-      // Flash effect + respawn at spawn point
       this.cameras.main.flash(300, 255, 0, 0, false);
-      this.player.takeDamage(1);
-      this.hudScene?.updateHealth(this.player.health, this.player.maxHealth);
+      if (!this.godMode) {
+        this.player.takeDamage(1);
+        this.hudScene?.updateHealth(this.player.health, this.player.maxHealth);
+      }
       this.time.delayedCall(400, () => {
         // Teleport back to spawn
         this.player.setPosition(
@@ -1311,8 +1330,8 @@ export class GameScene extends Phaser.Scene {
       if (this.comboTimer <= 0) this.comboCount = 0;
     }
 
-    // Fall death
-    if (this.player.y > this.physics.world.bounds.height + 80) {
+    // Fall death (skipped in god mode — player teleports back instead)
+    if (!this.godMode && this.player.y > this.physics.world.bounds.height + 80) {
       this.player.takeDamage(this.player.health);
       this.hudScene?.updateHealth(0, this.player.maxHealth);
       this.time.delayedCall(300, () => this.restartLevel());

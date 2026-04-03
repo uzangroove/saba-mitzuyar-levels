@@ -66,7 +66,8 @@ export class BootScene extends Phaser.Scene {
     this.load.image('bg_earth_3', 'assets/backgrounds/bg_earth_3.jpg');
 
     // ---- Load intro video ----
-    this.load.video('intro_video', 'assets/saba_intro.mp4', true);
+    // Replace assets/intro.mp4 with your own video file (960x540 recommended)
+    this.load.video('intro_video', 'assets/intro.mp4', true);
 
     // ---- Load character images ----
     this.load.image('saba_painted',     'assets/sprites/saba_painted.png');
@@ -74,11 +75,14 @@ export class BootScene extends Phaser.Scene {
     this.load.image('saba_small',       'assets/sprites/saba_painted_small.png');
     this.load.image('savta_rivka',      'assets/sprites/savta_rivka.png');
     this.load.image('savta_large',      'assets/sprites/savta_rivka_large.png');
-    this.load.image('fish_happy',       'assets/sprites/fish_happy.png');
-    this.load.image('jellycap',         'assets/sprites/jellycap.png');
-    this.load.image('full_eyes',        'assets/sprites/full_eyes.png');
-    this.load.image('space_telot',      'assets/sprites/space_telot.png');
 
+    // Your new, cleanly named monsters
+    this.load.image('monster1',         'assets/sprites/new_monster_1.png');
+    this.load.image('monster2',         'assets/sprites/new_monster_2.png');
+    this.load.image('monster3',         'assets/sprites/new_monster_3.png');
+    this.load.image('monster4',         'assets/sprites/new_monster_4.png');
+    this.load.image('monster5',         'assets/sprites/new_monster_5.png');
+    this.load.image('monster6',         'assets/sprites/new_monster_6.png');
     // ---- Particle textures (generated) ----
     this.generatePlaceholderAssets();
   }

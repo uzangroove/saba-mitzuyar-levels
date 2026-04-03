@@ -6,8 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>סבא מצוייר — Saba Mitzuyar</title>
     <meta name="description" content="A fun platformer game featuring Saba Shimon and his family!" />
+    <style>
+      /* CSS for your floating logo */
+      #floating-logo {
+        position: absolute;
+        top: 20px;
+        right: 20px; /* Adjust to left: 20px if you want it on the other side */
+        width: 120px; /* Change this to make it bigger/smaller */
+        z-index: 9999;
+        pointer-events: none; /* CRITICAL: Lets clicks pass through to the game */
+      }
+    </style>
   </head>
   <body>
+    <img src="logo.png" id="floating-logo" alt="My Logo" />
+    
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

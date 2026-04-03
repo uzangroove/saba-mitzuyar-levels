@@ -67,7 +67,7 @@ export class BootScene extends Phaser.Scene {
 
     // ---- Load intro video ----
     // Replace assets/intro.mp4 with your own video file (960x540 recommended)
-    this.load.video('intro_video', 'assets/intro.mp4', true);
+    this.load.video('intro_video', 'assets/saba_intro.mp4', true);
 
     // ---- Load character images ----
     this.load.image('saba_painted',     'assets/sprites/saba_painted.png');

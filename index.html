@@ -6,12 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>סבא מצוייר — Saba Mitzuyar</title>
     <meta name="description" content="A fun platformer game featuring Saba Shimon and his family!" />
-    <script type="module" crossorigin src="/saba-mitzuyar-levels/assets/index-CBBwOKbx.js"></script>
+    <style>
+      /* CSS for your floating logo */
+      #floating-logo {
+        position: absolute;
+        top: 20px;
+        right: 20px; /* Adjust to left: 20px if you want it on the other side */
+        width: 120px; /* Change this to make it bigger/smaller */
+        z-index: 9999;
+        pointer-events: none; /* CRITICAL: Lets clicks pass through to the game */
+      }
+    </style>
+    <script type="module" crossorigin src="/saba-mitzuyar-levels/assets/index-DpE1kdw-.js"></script>
     <link rel="modulepreload" crossorigin href="/saba-mitzuyar-levels/assets/rolldown-runtime-DF2fYuay.js">
     <link rel="modulepreload" crossorigin href="/saba-mitzuyar-levels/assets/phaser-BhHTBoCd.js">
     <link rel="stylesheet" crossorigin href="/saba-mitzuyar-levels/assets/index-CIt8coso.css">
   </head>
   <body>
+    <img src="logo.png" id="floating-logo" alt="My Logo" />
+    
     <div id="app"></div>
   </body>
 </html>

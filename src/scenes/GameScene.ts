@@ -56,6 +56,7 @@ export class GameScene extends Phaser.Scene {
   private godMode: boolean = false;
   private bossDefeated: boolean = false;
   private worldKey: string = 'earth';
+  private shadowGfx!: Phaser.GameObjects.Graphics;
 
   // Combo
   private comboCount: number = 0;
@@ -107,6 +108,9 @@ export class GameScene extends Phaser.Scene {
     this.loadLevel(ld);
     // Bake all static platform graphics into a cached texture (1 GPU draw call)
     this.bakePlatformLayer();
+
+    // Drop-shadow graphics (drawn under all entities — gives 3D depth illusion)
+    this.shadowGfx = this.add.graphics().setDepth(3);
 
     // Player
     this.player = new Player(this, ld.spawnPoint.x, ld.spawnPoint.y);
@@ -589,25 +593,24 @@ export class GameScene extends Phaser.Scene {
   private createStaticPlatform(cfg: PlatformConfig, fill: number, top: number, passthrough = false): void {
     const g = this.platformGfx; // shared — no new Graphics per platform
 
-    // Top surface
-    g.fillStyle(top);
-    g.fillRoundedRect(cfg.x, cfg.y, cfg.width, 8, { tl:4, tr:4, bl:0, br:0 });
+    // === ISO-STYLE 3D BLOCK ===
+    // Bottom depth face — dark strip below body gives illusion of block thickness
+    const depthDark = Math.max(0x111111, fill - 0x3a3a3a);
+    g.fillStyle(depthDark, 1);
+    g.fillRect(cfg.x + 6, cfg.y + cfg.height, cfg.width - 6, 11);
 
-    // Grass blade decoration
-    if (!this.levelData.isBoss) {
-      g.fillStyle(top + 0x111111);
-      for (let bx = cfg.x + 6; bx < cfg.x + cfg.width - 4; bx += 10) {
-        const h = 3 + Math.sin(bx * 0.4) * 2;
-        g.fillTriangle(bx, cfg.y, bx + 5, cfg.y, bx + 2, cfg.y - h);
-      }
-    }
+    // Right-edge depth face — dark right wall of the block
+    const sideDark = Math.max(0x111111, fill - 0x282828);
+    g.fillStyle(sideDark, 1);
+    g.fillRect(cfg.x + cfg.width, cfg.y + 7, 8, cfg.height + 5);
 
-    // Body
+    // Body (front face)
     g.fillStyle(fill);
     g.fillRect(cfg.x, cfg.y + 8, cfg.width, cfg.height - 8);
 
-    // Stone texture
-    g.fillStyle(fill - 0x151515, 0.4);
+    // Brick / stone texture on front face
+    const brickShade = Math.max(0, fill - 0x151515);
+    g.fillStyle(brickShade, 0.4);
     for (let row = 0; row < 3; row++) {
       for (let col = 0; col < Math.floor(cfg.width / 24); col++) {
         const bx = cfg.x + col * 24 + (row % 2) * 12;
@@ -618,7 +621,25 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // Physics
+    // Top surface (the bright face you stand on)
+    g.fillStyle(top);
+    g.fillRoundedRect(cfg.x, cfg.y, cfg.width, 9, { tl: 4, tr: 4, bl: 0, br: 0 });
+
+    // Top highlight — thin bright shimmer line
+    g.fillStyle(0xFFFFFF, 0.20);
+    g.fillRect(cfg.x + 4, cfg.y + 1, cfg.width - 8, 3);
+
+    // Grass blade decoration on top surface
+    if (!this.levelData.isBoss) {
+      const bladeColor = Math.min(0xFFFFFF, top + 0x181818);
+      g.fillStyle(bladeColor);
+      for (let bx = cfg.x + 6; bx < cfg.x + cfg.width - 4; bx += 10) {
+        const h = 3 + Math.sin(bx * 0.4) * 2;
+        g.fillTriangle(bx, cfg.y, bx + 5, cfg.y, bx + 2, cfg.y - h);
+      }
+    }
+
+    // Physics (unchanged — body matches original rect)
     const rect = this.add.rectangle(
       cfg.x + cfg.width / 2, cfg.y + cfg.height / 2,
       cfg.width, cfg.height
@@ -635,13 +656,33 @@ export class GameScene extends Phaser.Scene {
 
   private createMovingPlatform(cfg: PlatformConfig, fill: number, top: number): void {
     const g = this.add.graphics().setDepth(2);
-    g.fillStyle(top);
-    g.fillRoundedRect(0, 0, cfg.width, 8, { tl:4, tr:4, bl:0, br:0 });
+
+    // === ISO-STYLE 3D BLOCK (moving) ===
+    // Bottom depth face
+    const depthDark = Math.max(0x111111, fill - 0x3a3a3a);
+    g.fillStyle(depthDark, 1);
+    g.fillRect(6, cfg.height, cfg.width - 6, 11);
+
+    // Right-edge depth face
+    const sideDark = Math.max(0x111111, fill - 0x282828);
+    g.fillStyle(sideDark, 1);
+    g.fillRect(cfg.width, 7, 8, cfg.height + 5);
+
+    // Body (front face)
     g.fillStyle(fill);
     g.fillRect(0, 8, cfg.width, cfg.height - 8);
-    // Arrow indicator
-    g.fillStyle(0xFFFFFF, 0.2);
-    g.fillTriangle(cfg.width/2 - 6, 12, cfg.width/2 + 6, 12, cfg.width/2, 6);
+
+    // Top surface
+    g.fillStyle(top);
+    g.fillRoundedRect(0, 0, cfg.width, 9, { tl: 4, tr: 4, bl: 0, br: 0 });
+
+    // Top highlight
+    g.fillStyle(0xFFFFFF, 0.20);
+    g.fillRect(4, 1, cfg.width - 8, 3);
+
+    // Arrow indicator (signals this platform moves)
+    g.fillStyle(0xFFFFFF, 0.30);
+    g.fillTriangle(cfg.width/2 - 7, 15, cfg.width/2 + 7, 15, cfg.width/2, 8);
 
     const plat = this.add.rectangle(
       cfg.x + cfg.width / 2, cfg.y + cfg.height / 2,
@@ -666,20 +707,40 @@ export class GameScene extends Phaser.Scene {
 
   private createCrumblingPlatform(cfg: PlatformConfig, fill: number, top: number): void {
     const g = this.add.graphics().setDepth(2);
-    // Crumbling platforms get a distinctive cracked look
-    g.fillStyle(top);
-    g.fillRoundedRect(cfg.x, cfg.y, cfg.width, 8, { tl:4, tr:4, bl:0, br:0 });
+
+    // === ISO-STYLE 3D BLOCK (crumbling — red-tinted warning) ===
+    // Bottom depth face
+    const depthDark = Math.max(0x111111, fill - 0x3a3a3a);
+    g.fillStyle(depthDark, 1);
+    g.fillRect(cfg.x + 6, cfg.y + cfg.height, cfg.width - 6, 11);
+
+    // Right-edge depth face
+    const sideDark = Math.max(0x111111, fill - 0x282828);
+    g.fillStyle(sideDark, 1);
+    g.fillRect(cfg.x + cfg.width, cfg.y + 7, 8, cfg.height + 5);
+
+    // Body (front face)
     g.fillStyle(fill);
     g.fillRect(cfg.x, cfg.y + 8, cfg.width, cfg.height - 8);
-    // Crack lines to indicate crumbling
-    g.lineStyle(1.5, 0x000000, 0.35);
+
+    // Crack lines on the body
+    g.lineStyle(1.5, 0x000000, 0.38);
     for (let i = 1; i < 4; i++) {
       const cx = cfg.x + (cfg.width / 4) * i;
-      g.lineBetween(cx - 4, cfg.y + 2, cx + 4, cfg.y + cfg.height - 2);
+      g.lineBetween(cx - 4, cfg.y + 10, cx + 4, cfg.y + cfg.height - 2);
     }
-    // Warning dots (red tint) to signal danger
-    g.fillStyle(0xFF4444, 0.3);
-    g.fillRect(cfg.x + 2, cfg.y + 2, cfg.width - 4, 4);
+
+    // Top surface (red-tinted to signal danger)
+    g.fillStyle(top);
+    g.fillRoundedRect(cfg.x, cfg.y, cfg.width, 9, { tl: 4, tr: 4, bl: 0, br: 0 });
+
+    // Red danger tint on top
+    g.fillStyle(0xFF3333, 0.28);
+    g.fillRoundedRect(cfg.x + 2, cfg.y + 1, cfg.width - 4, 7, { tl: 4, tr: 4, bl: 0, br: 0 });
+
+    // Top highlight
+    g.fillStyle(0xFFFFFF, 0.15);
+    g.fillRect(cfg.x + 4, cfg.y + 1, cfg.width - 8, 3);
 
     const rect = this.add.rectangle(
       cfg.x + cfg.width / 2, cfg.y + cfg.height / 2,
@@ -1177,6 +1238,27 @@ export class GameScene extends Phaser.Scene {
         } else {
           e.update(dt);
         }
+      }
+    }
+
+    // === ISO-STYLE DROP SHADOWS under all entities ===
+    if (this.shadowGfx) {
+      this.shadowGfx.clear();
+      this.shadowGfx.fillStyle(0x000000, 0.18);
+      // Player shadow — ellipse at feet, squashed for perspective
+      if (!this.player.isDead()) {
+        this.shadowGfx.fillEllipse(this.player.x, this.player.y + 2, 28, 7);
+      }
+      // Enemy shadows
+      for (const e of this.enemies) {
+        if (!e.isDead) {
+          this.shadowGfx.fillEllipse(e.x, e.y + 2, 26, 6);
+        }
+      }
+      // Boss shadow
+      if (this.boss && this.boss.state !== 'DEAD') {
+        this.shadowGfx.fillStyle(0x000000, 0.22);
+        this.shadowGfx.fillEllipse(this.boss.x, this.boss.y + 4, 60, 12);
       }
     }
 

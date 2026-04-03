@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(ls \"C:\\\\Users\\\\uzan2\\\\.claude\\\\projects\\\\C--claude-source-saba-mitzuyar-levels\\\\memory\"\" 2>/dev/null || echo \"directory empty or missing \")",
+      "Bash(git config:*)",
+      "Bash(git remote:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(find /c/claude_source/saba-mitzuyar-levels/src -type f -name *.ts)",
+      "Bash(ls \"C:\\\\claude_source\\\\saba-mitzuyar-levels\\\\public\\\\assets\\\\sprites\"\" 2>&1 && echo \"---\" && ls \"C:claude_sourcesaba-mitzuyar-levelspublic\"\")",
+      "Bash(dir /b \"C:\\\\claude_source\\\\saba-mitzuyar-levels\\\\public\")",
+      "Bash(dir /b \"C:\\\\claude_source\\\\saba-mitzuyar-levels\\\\public\\\\assets\\\\sprites\")"
+    ]
+  }
+}

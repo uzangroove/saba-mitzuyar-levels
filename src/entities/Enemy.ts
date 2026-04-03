@@ -41,16 +41,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     body.setMaxVelocityY(600);
     this.setDepth(4);
     this.setOrigin(0.5, 1.0);
-
-    // Tween: gentle bob animation (GPU only, zero CPU)
-    scene.tweens.add({
-      targets: this,
-      y: y - 4,
-      duration: 800 + Math.random() * 400,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
+    // No bob tween — arcade physics controls Y each frame;
+    // a tween fighting the physics body causes high-frequency flicker.
   }
 
   update(dt: number): void {

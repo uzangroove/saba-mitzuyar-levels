@@ -20,8 +20,8 @@ export class MainMenuScene extends Phaser.Scene {
     // ---- Animated clouds ----
     this.buildClouds(W, H);
 
-    // ---- Castle + Savta ----
-    this.buildCastleAndSavta(W, H);
+    // ---- Savta floating on right ----
+    this.buildSavta(W, H);
 
     // ---- Saba character ----
     this.buildCharacters(W, H);
@@ -108,108 +108,24 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   // ============================================================
-  // CASTLE & SAVTA — right side
+  // SAVTA — floating on right side (no castle — add castle.png later)
   // ============================================================
-  private buildCastleAndSavta(W: number, H: number): void {
-    const cx = W * 0.74, cy = H - 10;
-    const castleKey = 'menu_castle_v3';
+  private buildSavta(W: number, H: number): void {
+    const savtaX = W * 0.76, savtaY = H * 0.48;
+    const key = this.textures.exists('savta_large') ? 'savta_large' : 'savta_rivka';
+    if (!this.textures.exists(key)) return;
 
-    if (!this.textures.exists(castleKey)) {
-      const rtW = 320, rtH = 380;
-      const rt = this.add.renderTexture(0, 0, rtW, rtH);
-      const g = this.add.graphics();
-      const ox = rtW / 2, oy = rtH;
-
-      // Colour palette — bright toy/clay style matching screenshot
-      const colors = {
-        yellow: 0xF5C542, orange: 0xE07B30, pink: 0xDB6E9F,
-        purple: 0x8B5CF6, green: 0x5AB56E, blue: 0x4B9FD5,
-        roof1: 0xC0392B, roof2: 0x8E44AD, roof3: 0x2980B9,
-        stone: 0xE8D5B7, stoneDark: 0xC4A882,
-      };
-
-      // Main keep — yellow
-      g.fillStyle(colors.yellow);
-      g.fillRect(ox - 70, oy - 180, 140, 180);
-      g.fillStyle(colors.orange);
-      g.fillRect(ox - 70, oy - 180, 140, 12);
-
-      // Gate arch
-      g.fillStyle(0x3D2B1F);
-      g.fillRoundedRect(ox - 24, oy - 80, 48, 80, { tl: 24, tr: 24, bl: 0, br: 0 });
-
-      // Left tower — pink
-      g.fillStyle(colors.pink);
-      g.fillRect(ox - 106, oy - 260, 72, 260);
-      // Left roof — red cone
-      g.fillStyle(colors.roof1);
-      g.fillTriangle(ox - 70, oy - 310, ox - 118, oy - 260, ox - 22, oy - 260);
-
-      // Right tower — purple, shorter
-      g.fillStyle(colors.purple);
-      g.fillRect(ox + 34, oy - 210, 60, 210);
-      // Right roof — purple/blue
-      g.fillStyle(colors.roof2);
-      g.fillTriangle(ox + 64, oy - 255, ox + 20, oy - 210, ox + 108, oy - 210);
-
-      // Far-right mini tower — green
-      g.fillStyle(colors.green);
-      g.fillRect(ox + 80, oy - 160, 44, 160);
-      g.fillStyle(colors.roof3);
-      g.fillTriangle(ox + 102, oy - 195, ox + 68, oy - 160, ox + 136, oy - 160);
-
-      // Windows — yellow glows
-      const wins = [[ox - 70, oy - 220], [ox - 70, oy - 160], [ox + 64, oy - 170], [ox + 102, oy - 130]];
-      for (const [wx, wy] of wins) {
-        g.fillStyle(0xFFE066);
-        g.fillRoundedRect(wx - 13, wy - 20, 26, 28, { tl: 13, tr: 13, bl: 0, br: 0 });
-      }
-
-      // Battlements on main keep
-      for (let b = -3; b <= 3; b++) {
-        g.fillStyle(colors.yellow);
-        g.fillRect(ox + b * 22 - 9, oy - 200, 16, 22);
-      }
-
-      // Flags
-      g.lineStyle(2, 0x6D4C2A, 1);
-      g.lineBetween(ox - 70, oy - 310, ox - 70, oy - 348);
-      g.fillStyle(0xE53935);
-      g.fillTriangle(ox - 70, oy - 348, ox - 70 + 28, oy - 338, ox - 70, oy - 326);
-
-      g.lineBetween(ox + 64, oy - 255, ox + 64, oy - 285);
-      g.fillStyle(0x43A047);
-      g.fillTriangle(ox + 64, oy - 285, ox + 64 + 22, oy - 276, ox + 64, oy - 265);
-
-      rt.draw(g, 0, 0);
-      rt.saveTexture(castleKey);
-      g.destroy();
-      rt.destroy();
-    }
-
-    this.add.image(cx, cy, castleKey).setDepth(2).setOrigin(0.5, 1).setScale(1.15);
-
-    // Savta on top of castle
-    const savtaX = cx - 80, savtaY = cy - 335;
-    if (this.textures.exists('savta_large')) {
-      const savta = this.add.image(savtaX, savtaY, 'savta_large')
-        .setDisplaySize(72, 90).setDepth(5);
-      this.tweens.add({ targets: savta, y: { from: savtaY - 4, to: savtaY + 4 }, duration: 2000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-    } else if (this.textures.exists('savta_rivka')) {
-      const savta = this.add.image(savtaX, savtaY, 'savta_rivka')
-        .setDisplaySize(48, 60).setDepth(5);
-      this.tweens.add({ targets: savta, y: { from: savtaY - 4, to: savtaY + 4 }, duration: 2000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-    }
-
-    // Flag wave
-    const fPoleX = cx - 80 * 1.15 - 10, fPoleY = cy - 358;
-    const flagRect = this.add.rectangle(fPoleX + 14, fPoleY + 9, 28, 18, 0xE53935)
-      .setDepth(3).setOrigin(0, 0.5);
-    this.tweens.add({ targets: flagRect, scaleX: { from: 1.0, to: 0.5 }, duration: 520, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+    const savta = this.add.image(savtaX, savtaY, key)
+      .setDisplaySize(110, 140).setDepth(4);
+    this.tweens.add({
+      targets: savta,
+      y: { from: savtaY - 6, to: savtaY + 6 },
+      duration: 2000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut',
+    });
   }
 
   // ============================================================
-  // CHARACTERS — Saba (large) center-left
+  // CHARACTERS — Saba only, no quail/bird companion
   // ============================================================
   private buildCharacters(W: number, H: number): void {
     void W;
@@ -221,6 +137,7 @@ export class MainMenuScene extends Phaser.Scene {
       this.tweens.add({ targets: saba, y: { from: sabaY - 4, to: sabaY + 4 }, duration: 2000, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
       this.tweens.add({ targets: saba, scaleX: { from: 1.0, to: 1.015 }, duration: 2400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     }
+    // No quail/bird companion — removed by user request
   }
 
   // ============================================================

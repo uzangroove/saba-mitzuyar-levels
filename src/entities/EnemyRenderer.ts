@@ -3,25 +3,24 @@
 // Otherwise falls back to procedurally drawn shapes.
 // Called ONCE at level load. Zero per-frame CPU cost.
 
-export type EnemyType = 'slime' | 'beetle' | 'spinner' | 'jellyfish' | 'crab' | 'bird' | 'robot';
+export type EnemyType = 'monster1' | 'monster2' | 'monster3' | 'monster4' | 'monster5' | 'monster6';
 
-// Maps enemy types to which custom monster slot (1-6) to use
+// Maps each monsterN to its own slot N
 const MONSTER_SLOT: Record<EnemyType, number> = {
-  slime:     1,
-  beetle:    2,
-  jellyfish: 3,
-  crab:      4,
-  bird:      5,
-  robot:     6,
-  spinner:   1, // spinner uses monster1 as fallback
+  monster1: 1,
+  monster2: 2,
+  monster3: 3,
+  monster4: 4,
+  monster5: 5,
+  monster6: 6,
 };
 
 export function bakeEnemyTextures(scene: Phaser.Scene): void {
   // Only bake if not already done
-  if (scene.textures.exists('enemy_slime_0')) return;
+  if (scene.textures.exists('enemy_monster1_0')) return;
 
   // --- Try to use custom monster images first ---
-  const types: EnemyType[] = ['slime', 'beetle', 'jellyfish', 'crab', 'bird', 'robot', 'spinner'];
+  const types: EnemyType[] = ['monster1', 'monster2', 'monster3', 'monster4', 'monster5', 'monster6'];
 
   for (const type of types) {
     const slot = MONSTER_SLOT[type];
@@ -49,13 +48,12 @@ export function bakeEnemyTextures(scene: Phaser.Scene): void {
 function _bakeFallback(scene: Phaser.Scene, type: EnemyType): void {
   type FallbackDef = { color: number; w: number; h: number };
   const defs: Record<EnemyType, FallbackDef> = {
-    slime:     { color: 0x66BB6A, w: 48, h: 40 },
-    beetle:    { color: 0xD32F2F, w: 44, h: 36 },
-    spinner:   { color: 0xB71C1C, w: 44, h: 44 },
-    jellyfish: { color: 0x7986CB, w: 40, h: 44 },
-    crab:      { color: 0xE64A19, w: 44, h: 32 },
-    bird:      { color: 0xFF8F00, w: 36, h: 32 },
-    robot:     { color: 0x607D8B, w: 40, h: 44 },
+    monster1: { color: 0x66BB6A, w: 48, h: 40 },
+    monster2: { color: 0xD32F2F, w: 44, h: 36 },
+    monster3: { color: 0x7986CB, w: 40, h: 44 },
+    monster4: { color: 0xE64A19, w: 44, h: 32 },
+    monster5: { color: 0xFF8F00, w: 36, h: 32 },
+    monster6: { color: 0x607D8B, w: 40, h: 44 },
   };
 
   const { color, w, h } = defs[type];

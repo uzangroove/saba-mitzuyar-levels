@@ -24,7 +24,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.variant = variant;
     this.patrolStartX = x;
     this.patrolDistance = patrolDistance;
-    this.speed = enemyType === 'spinner' ? 90 : (enemyType === 'beetle' ? 70 : 55);
+    const speedMap: Record<string, number> = {
+      monster1: 55, monster2: 70, monster3: 55,
+      monster4: 60, monster5: 75, monster6: 65,
+    };
+    this.speed = speedMap[enemyType] ?? 55;
 
     scene.add.existing(this);
     scene.physics.add.existing(this);

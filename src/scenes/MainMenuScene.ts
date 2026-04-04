@@ -14,27 +14,28 @@ export class MainMenuScene extends Phaser.Scene {
     const W = this.scale.width;
     const H = this.scale.height;
 
-    // ---- Background ----
-    this.buildBackground(W, H);
+    // Hide IMAGINA HTML logo — rendered inside Phaser here
+    const htmlLogo = document.getElementById('floating-logo') as HTMLElement | null;
+    if (htmlLogo) htmlLogo.style.display = 'none';
 
-    // ---- Animated clouds ----
-    this.buildClouds(W, H);
+    if (this.textures.exists('main_menu_bg')) {
+      // ---- STATIC MODE: user-supplied background image ----
+      this.add.image(W / 2, H / 2, 'main_menu_bg')
+        .setDisplaySize(W, H).setDepth(0);
+      this.buildButtons(W, H);
+    } else {
+      // ---- FALLBACK: procedural background ----
+      this.buildBackground(W, H);
+      this.buildClouds(W, H);
+      this.buildSavta(W, H);
+      this.buildCharacters(W, H);
+      this.buildTitle(W, H);
+      this.buildButtons(W, H);
+    }
 
-    // ---- Savta floating on right ----
-    this.buildSavta(W, H);
-
-    // ---- Saba character ----
-    this.buildCharacters(W, H);
-
-    // ---- Rainbow title + subtitle ----
-    this.buildTitle(W, H);
-
-    // ---- Left-side buttons ----
-    this.buildButtons(W, H);
-
-    // ---- Controls hint ----
+    // Controls hint (always shown)
     this.add.text(W / 2, H - 10, '← → הזזה   |   רווח קפיצה   |   Z דאש   |   X פטיש', {
-      fontSize: '11px', fontFamily: 'Arial', color: '#7a9ab0', rtl: true,
+      fontSize: '11px', fontFamily: 'Arial', color: '#FFFFFF99', rtl: true,
     }).setOrigin(0.5, 1).setDepth(10);
 
     this.cameras.main.fadeIn(500, 255, 255, 255);

@@ -17,6 +17,10 @@ export class IntroScene extends Phaser.Scene {
     const W = this.scale.width;
     const H = this.scale.height;
 
+    // Hide IMAGINA logo during intro video
+    const htmlLogo = document.getElementById('floating-logo') as HTMLElement | null;
+    if (htmlLogo) htmlLogo.style.display = 'none';
+
     // Black background
     this.add.rectangle(W/2, H/2, W, H, 0x000000);
 

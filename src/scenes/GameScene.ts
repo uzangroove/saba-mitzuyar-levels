@@ -81,6 +81,10 @@ export class GameScene extends Phaser.Scene {
     const worldWidth = this.calcWorldWidth(ld);
     this.physics.world.setBounds(0, -200, worldWidth, H + 800);  // tall bounds — pit death handled in code
 
+    // Show IMAGINA logo during gameplay
+    const htmlLogo = document.getElementById('floating-logo') as HTMLElement | null;
+    if (htmlLogo) htmlLogo.style.display = 'block';
+
     // Pre-bake all sprites (zero per-frame cost after this)
     bakeEnemyTextures(this);
     // Background

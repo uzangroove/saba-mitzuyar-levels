@@ -1180,7 +1180,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private getWorldName(): string {
-    const names: Record<string, string> = { earth:'ארץ 🌍', water:'מים 🌊', sky:'שמיים ☁️', space:'חלל 🚀' };
+    const names: Record<string, string> = { earth:'ארץ', water:'מים', sky:'שמיים', space:'חלל' };
     return names[this.worldKey] ?? 'Earth';
   }
 

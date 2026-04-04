@@ -62,15 +62,13 @@ export class TransitionScene extends Phaser.Scene {
     }).setOrigin(0.5).setAlpha(0);
 
     // ---- Main title ----
-    const title = this.add.text(W/2, H/2 + 34,
-      isBoss ? 'STONE  GIANT' : worldName.toUpperCase(), {
-      fontSize: isBoss ? '56px' : '48px',
-      fontFamily: 'Arial Black, Arial',
-      color: isBoss ? '#FF2222' : '#FFFFFF',
-      stroke: '#000000',
-      strokeThickness: isBoss ? 8 : 6,
-      letterSpacing: 4,
-    }).setOrigin(0.5).setAlpha(0).setScale(0.6);
+    // Hebrew world names must not use toUpperCase() or letterSpacing (breaks RTL glyphs)
+    const titleStr  = isBoss ? 'STONE  GIANT' : worldName;
+    const titleStyle: Phaser.Types.GameObjects.Text.TextStyle = isBoss
+      ? { fontSize: '56px', fontFamily: 'Arial Black, Arial', color: '#FF2222', stroke: '#000000', strokeThickness: 8, letterSpacing: 4 }
+      : { fontSize: '52px', fontFamily: 'Arial Black, Arial', color: '#FFFFFF', stroke: '#000000', strokeThickness: 6, rtl: true };
+    const title = this.add.text(W/2, H/2 + 34, titleStr, titleStyle)
+      .setOrigin(0.5).setAlpha(0).setScale(0.6);
 
     // ---- Subtitle ----
     const subtitle = isBoss

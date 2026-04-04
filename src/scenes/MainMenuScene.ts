@@ -145,18 +145,19 @@ export class MainMenuScene extends Phaser.Scene {
   // ============================================================
   private buildTitle(W: number, H: number): void {
     void H;
-    // Hebrew "סבא מצוייר" in visual left→right screen order is: ר י י ו צ מ [gap] א ב ס
-    // So we place ס at rightmost (startX) and ר at leftmost (startX - 9*lw)
-    // Array index 0 = first letter 'ס' = rightmost position
-    const letters = ['ס', 'ב', 'א', ' ', 'מ', 'צ', 'ו', 'י', 'י', 'ר'];
-    const colours = ['#F4511E','#D81B60','#8E24AA','','#1E88E5','#00ACC1','#43A047','#FDD835','#FB8C00','#E53935'];
-    const lw      = 46;
-    // Centre the title in the non-castle area (roughly x 280–760)
-    const titleCx = 500;
-    const totalW  = 9 * lw;          // 9 letter slots (space skipped visually)
-    const startX  = titleCx + totalW / 2;   // rightmost letter x
-    const titleY  = 56;
+    // Layout (all centred at titleCx):
+    //   titleY      — rainbow Hebrew title "סבא מצוייר"
+    //   titleY + 70 — IMAGINA logo (Phaser image, 80px wide)
+    //   titleY + 108 — subtitle "להציל את סבתא רבקה"
+    const letters  = ['ס', 'ב', 'א', ' ', 'מ', 'צ', 'ו', 'י', 'י', 'ר'];
+    const colours  = ['#F4511E','#D81B60','#8E24AA','','#1E88E5','#00ACC1','#43A047','#FDD835','#FB8C00','#E53935'];
+    const lw       = 46;
+    const titleCx  = 500;
+    const totalW   = 9 * lw;
+    const startX   = titleCx + totalW / 2;
+    const titleY   = 46;
 
+    // Rainbow title letters
     letters.forEach((ch, i) => {
       if (ch === ' ') return;
       this.add.text(startX - i * lw, titleY, ch, {
@@ -169,8 +170,14 @@ export class MainMenuScene extends Phaser.Scene {
       }).setOrigin(0.5).setDepth(8);
     });
 
-    // Subtitle — rtl: true makes Phaser render Hebrew words in correct RTL order
-    this.add.text(titleCx, titleY + 72, 'להציל את סבתא רבקה', {
+    // IMAGINA logo — Phaser image centred below title
+    if (this.textures.exists('imagina_logo')) {
+      this.add.image(titleCx, titleY + 70, 'imagina_logo')
+        .setDisplaySize(90, 36).setDepth(8).setOrigin(0.5);
+    }
+
+    // Subtitle centred below logo
+    this.add.text(titleCx, titleY + 100, 'להציל את סבתא רבקה', {
       fontSize: '22px',
       fontFamily: 'Arial Black, Arial',
       color: '#7B1FA2',
@@ -178,6 +185,10 @@ export class MainMenuScene extends Phaser.Scene {
       strokeThickness: 4,
       rtl: true,
     }).setOrigin(0.5, 0).setDepth(8);
+
+    // Hide the HTML floating logo — it's now rendered inside Phaser
+    const htmlLogo = document.getElementById('floating-logo') as HTMLElement | null;
+    if (htmlLogo) htmlLogo.style.display = 'none';
   }
 
   // ============================================================

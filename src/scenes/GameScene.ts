@@ -912,8 +912,8 @@ export class GameScene extends Phaser.Scene {
     };
 
     // Boss physics
-    this.physics.add.collider(this.boss.physRect, this.platforms);
-    this.physics.add.collider(this.boss.physRect, this.movingPlatforms);
+    this.physics.add.collider(this.boss, this.platforms);
+    this.physics.add.collider(this.boss, this.movingPlatforms);
   }
 
   // ============================================================
@@ -960,7 +960,7 @@ export class GameScene extends Phaser.Scene {
 
     // Boss overlap
     if (this.boss) {
-      this.physics.add.overlap(this.player, this.boss.physRect, () => {
+      this.physics.add.overlap(this.player, this.boss, () => {
         if (!this.boss || this.boss.state === 'DEAD' || this.player.isDead() || this.bossDefeated) return;
         const pBody = this.player.body as Phaser.Physics.Arcade.Body;
         // Stomp boss head

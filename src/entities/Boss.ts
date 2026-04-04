@@ -58,9 +58,6 @@ export class Boss extends Phaser.GameObjects.Container {
   private roarScale: number = 1;
   private shakeX: number = 0;
 
-  // Physics proxy
-  physRect!: Phaser.GameObjects.Rectangle;
-
   // Events
   onDeath?: () => void;
   onPhaseChange?: (phase: BossPhase) => void;
@@ -393,9 +390,8 @@ export class Boss extends Phaser.GameObjects.Container {
 
     if (this.state === 'DEAD') { this.redraw(); return; }
 
-    const body = this.physRect.body as Phaser.Physics.Arcade.Body;
-    // Sync container position to physics rect
-    this.setPosition(this.physRect.x, this.physRect.y);
+    const body = this.body as Phaser.Physics.Arcade.Body;
+    if (!body) return;
     const dx = playerX - this.x;
     const dist = Math.abs(dx);
 
@@ -579,17 +575,16 @@ export class Boss extends Phaser.GameObjects.Container {
     this.hitFlash = 0.8;
     this.setBossState('HIT', 0.25);
 
-    const dmgBody = this.physRect.body as Phaser.Physics.Arcade.Body;
-    dmgBody.velocity.x = (this.facingRight ? -1 : 1) * 150;
+    const dmgBody = this.body as Phaser.Physics.Arcade.Body;
+    if (dmgBody) dmgBody.velocity.x = (this.facingRight ? -1 : 1) * 150;
 
     if (this.health <= 0) this.die();
   }
 
   private die(): void {
     this.setBossState('DEAD', 999);
-    const dieBody = this.physRect.body as Phaser.Physics.Arcade.Body;
-    dieBody.velocity.x = 0;
-    dieBody.velocity.y = -400;
+    const dieBody = this.body as Phaser.Physics.Arcade.Body;
+    if (dieBody) { dieBody.velocity.x = 0; dieBody.velocity.y = -400; }
 
     // Death animation
     this.scene.tweens.add({

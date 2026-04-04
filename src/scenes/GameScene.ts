@@ -4,7 +4,6 @@
 
 import Phaser from 'phaser';
 import { Player } from '../entities/Player';
-import { QuailCompanion, bakeQuailTexture } from '../entities/QuailCompanion';
 import { bakeEnemyTextures } from '../entities/EnemyRenderer';
 import { Enemy } from '../entities/Enemy';
 import { Boss } from '../entities/Boss';
@@ -27,7 +26,6 @@ interface CrumblingState {
 export class GameScene extends Phaser.Scene {
   // Entities
   private player!: Player;
-  private quail!: QuailCompanion;
   private enemies: Enemy[] = [];
   private boss: Boss | null = null;
 
@@ -85,8 +83,6 @@ export class GameScene extends Phaser.Scene {
 
     // Pre-bake all sprites (zero per-frame cost after this)
     bakeEnemyTextures(this);
-    bakeQuailTexture(this);
-
     // Background
     this.buildBackground(W, H, worldWidth);
 
@@ -116,9 +112,6 @@ export class GameScene extends Phaser.Scene {
     this.player = new Player(this, ld.spawnPoint.x, ld.spawnPoint.y);
     this.player.setWorldParams(getWorldConfig(this.currentLevel));
     this.player.setDepth(5);
-
-    // Quail
-    this.quail = new QuailCompanion(this, ld.spawnPoint.x, ld.spawnPoint.y - 36);
 
     // Boss (if boss level)
     if (ld.isBoss) this.spawnBoss(ld);
@@ -1227,8 +1220,6 @@ export class GameScene extends Phaser.Scene {
     const input = this.inputManager.getState();
 
     this.player.update(dt, input);
-    this.quail.update(dt, this.player.x, this.player.y, this.player.state, this.player.facingRight);
-
     const worldBottom = this.physics.world.bounds.height;
     for (const e of this.enemies) {
       if (!e.isDead) {

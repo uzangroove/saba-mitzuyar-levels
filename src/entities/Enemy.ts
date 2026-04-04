@@ -72,14 +72,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   die(): void {
     if (this.isDead) return;
     this.isDead = true;
-    // Stop all existing tweens (bob animation etc.)
+    if (!this.scene || !this.scene.tweens) { this.destroy(); return; }
     this.scene.tweens.killTweensOf(this);
     const body = this.body as Phaser.Physics.Arcade.Body;
     if (body) {
       body.setVelocity(0, -200);
       body.setGravityY(600);
     }
-    // Death animation → then destroy once
     this.scene.tweens.add({
       targets: this,
       alpha: 0,
@@ -87,7 +86,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       scaleY: 0.5,
       duration: 500,
       onComplete: () => {
-        if (this.scene) this.destroy();
+        if (this.scene && this.scene.tweens) this.destroy();
       },
     });
   }

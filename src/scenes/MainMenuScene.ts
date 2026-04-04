@@ -111,7 +111,7 @@ export class MainMenuScene extends Phaser.Scene {
   // SAVTA — floating on right side (no castle — add castle.png later)
   // ============================================================
   private buildSavta(W: number, H: number): void {
-    const savtaX = W * 0.76, savtaY = H * 0.48;
+    const savtaX = W * 0.93, savtaY = H * 0.18;
     const key = this.textures.exists('savta_large') ? 'savta_large' : 'savta_rivka';
     if (!this.textures.exists(key)) return;
 

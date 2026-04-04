@@ -10,11 +10,12 @@
       /* CSS for your floating logo */
       #floating-logo {
         position: absolute;
-        top: 20px;
-        right: 20px; /* Adjust to left: 20px if you want it on the other side */
-        width: 120px; /* Change this to make it bigger/smaller */
+        top: 21%;   /* sits just below the title text (~20% down the canvas) */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
         z-index: 9999;
-        pointer-events: none; /* CRITICAL: Lets clicks pass through to the game */
+        pointer-events: none;
       }
     </style>
   </head>

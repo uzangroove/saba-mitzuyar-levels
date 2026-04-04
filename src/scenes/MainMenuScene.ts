@@ -226,6 +226,16 @@ export class MainMenuScene extends Phaser.Scene {
       this.scene.pause();
       this.scene.launch('SettingsScene');
     });
+    btnY += gap;
+
+    // "אפס התקדמות" — dark red/reset
+    this.makeButton(btnX, btnY, 'אפס התקדמות', BW, BH, 0x880000, 0xBB0000, () => {
+      // Confirm before wiping progress
+      saveManager.reset();
+      // Restart this scene so buttons refresh (המשך button disappears)
+      this.cameras.main.fadeOut(300, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => this.scene.restart());
+    });
   }
 
   private makeButton(cx: number, cy: number, label: string, BW: number, BH: number,

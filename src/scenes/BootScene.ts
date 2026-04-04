@@ -84,7 +84,11 @@ export class BootScene extends Phaser.Scene {
     this.load.image('monster5',         'assets/sprites/new_monster_5.png');
     this.load.image('monster6',         'assets/sprites/new_monster_6.png');
     this.load.image('imagina_logo',     'logo.png');
-    this.load.image('main_menu_bg',     'assets/main_menu_bg.jpg');
+    // main_menu_bg is optional — 404 is silently ignored
+    this.load.image('main_menu_bg', 'assets/main_menu_bg.jpg');
+    this.load.on('loaderror', (file: { key: string }) => {
+      if (file.key === 'main_menu_bg') { /* silently ignore — fallback UI used */ }
+    });
     // ---- Particle textures (generated) ----
     this.generatePlaceholderAssets();
   }

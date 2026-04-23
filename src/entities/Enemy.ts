@@ -46,21 +46,35 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   update(dt: number): void {
-    if (this.isDead) return;  // death handled by tween in die()
-    
+    if (this.isDead) return;
 
     const body = this.body as Phaser.Physics.Arcade.Body;
-    if (!body) return;  // physics not ready yet
+    if (!body) return;
+
+    // ── Edge detection — מניעת נפילה מקצה פלטפורמה ──
+    // בודקים אם יש פיזיקה-גוף מתחת לנקודה שלפנינו
+    if (body.blocked.down) {
+      const stepAhead = this.width * 0.45 + 6;
+      const checkX   = this.x + this.moveDir * stepAhead;
+      const checkY   = this.y + 6;          // מעט מתחת לרגליים
+      const hits = this.scene.physics.overlapRect(checkX - 3, checkY, 6, 10, true, true);
+      if (hits.length === 0) {
+        this.moveDir *= -1;                  // הופך כיוון לפני הקצה
+      }
+    }
+
     body.velocity.x = this.moveDir * this.speed;
 
+    // Patrol distance limits
     const distFromStart = this.x - this.patrolStartX;
     if (distFromStart > this.patrolDistance && this.moveDir > 0) this.moveDir = -1;
     else if (distFromStart < 0 && this.moveDir < 0) this.moveDir = 1;
 
-    if (body.blocked.left) this.moveDir = 1;
+    // Wall collision reversal
+    if (body.blocked.left)  this.moveDir = 1;
     if (body.blocked.right) this.moveDir = -1;
 
-    // Face direction by flipping sprite
+    // Face direction
     this.setFlipX(this.moveDir < 0);
   }
 

@@ -21,10 +21,11 @@ interface WorldDef {
 }
 
 const WORLDS: WorldDef[] = [
-  { key: 'earth', name: 'ארץ', emoji: '🌍', color: 0x4CAF50, colorDark: 0x2E7D32, levelStart: 1,  levelEnd: 10, bossLevel: 10, unlockLevel: 1  },
-  { key: 'water', name: 'מים', emoji: '🌊', color: 0x2196F3, colorDark: 0x1565C0, levelStart: 11, levelEnd: 20, bossLevel: 20, unlockLevel: 11 },
-  { key: 'sky',   name: 'שמיים', emoji: '☁️',  color: 0x03A9F4, colorDark: 0x0277BD, levelStart: 21, levelEnd: 30, bossLevel: 30, unlockLevel: 21 },
-  { key: 'space', name: 'חלל', emoji: '🚀', color: 0x9C27B0, colorDark: 0x6A1B9A, levelStart: 31, levelEnd: 40, bossLevel: 40, unlockLevel: 31 },
+  { key: 'earth',  name: 'ארץ',    emoji: '🌍', color: 0x4CAF50, colorDark: 0x2E7D32, levelStart: 1,  levelEnd: 10, bossLevel: 10, unlockLevel: 1  },
+  { key: 'water',  name: 'מים',    emoji: '🌊', color: 0x2196F3, colorDark: 0x1565C0, levelStart: 11, levelEnd: 20, bossLevel: 20, unlockLevel: 11 },
+  { key: 'sky',    name: 'שמיים',  emoji: '☁️',  color: 0x03A9F4, colorDark: 0x0277BD, levelStart: 21, levelEnd: 30, bossLevel: 30, unlockLevel: 21 },
+  { key: 'space',  name: 'חלל',   emoji: '🚀', color: 0x9C27B0, colorDark: 0x6A1B9A, levelStart: 31, levelEnd: 40, bossLevel: 40, unlockLevel: 31 },
+  { key: 'crayon', name: 'ציורים', emoji: '🎨', color: 0xFF69B4, colorDark: 0xC71585, levelStart: 41, levelEnd: 60, bossLevel: 60, unlockLevel: 41 },
 ];
 
 export class LevelSelectScene extends Phaser.Scene {
@@ -258,15 +259,17 @@ export class LevelSelectScene extends Phaser.Scene {
     this.levelBubbles.forEach(c => c.destroy());
     this.levelBubbles = [];
 
-    const bubbleSize = 64;
-    const cols = 5, rows = 2;
+    const bubbleSize = 60;
+    const levelCount2 = wd.levelEnd - wd.levelStart + 1;
+    const cols = levelCount2 > 10 ? 10 : 5;
+    const rows = Math.ceil(levelCount2 / cols);
     const gapX = 20, gapY = 24;
     const totalW = cols * bubbleSize + (cols - 1) * gapX;
     const totalH = rows * bubbleSize + (rows - 1) * gapY;
     const startX = (W - totalW) / 2 + bubbleSize / 2;
     const startY = (H - totalH) / 2;
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < (wd.levelEnd - wd.levelStart + 1); i++) {
       const levelId = wd.levelStart + i;
       const col = i % cols;
       const row = Math.floor(i / cols);

@@ -38,15 +38,16 @@ export const GameAPI = {
     const level = startLevel ?? saveManager.getCurrentLevel();
 
     gameInstance = new Phaser.Game({
-      type: Phaser.WEBGL,  // Force WebGL (no canvas fallback overhead)
+      type: Phaser.WEBGL,
       width: GAME.WIDTH,
       height: GAME.HEIGHT,
       parent: containerId,
       backgroundColor: '#0a0a1a',
       pixelArt: false,
-      antialias: false,     // Disable antialiasing (big perf gain)
-      roundPixels: true,    // Prevent sub-pixel rendering
-      powerPreference: 'high-performance',  // Request GPU preference
+      antialias: false,
+      roundPixels: true,
+      powerPreference: 'high-performance',
+      preserveDrawingBuffer: true,   // allows canvas.toDataURL() for screenshots
       fps: {
         target: 60,
         forceSetTimeOut: false,  // Use RAF not setTimeout

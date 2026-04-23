@@ -5,6 +5,7 @@
 // ============================================================
 
 import Phaser from 'phaser';
+import { VFXManager } from '../systems/VFXManager';
 import { PHYSICS, PLAYER } from '../constants/physics';
 import { InputState } from '../systems/InputManager';
 import { WorldParams } from '../worlds/WorldConfig';
@@ -18,6 +19,7 @@ export class Player extends Phaser.GameObjects.Container {
 
   state: PlayerState = 'IDLE';
   facingRight: boolean = true;
+  private vfx: VFXManager | null = null;
   health: number = PLAYER.MAX_HEALTH;
   maxHealth: number = PLAYER.MAX_HEALTH;
   isInvulnerable: boolean = false;
@@ -516,6 +518,10 @@ export class Player extends Phaser.GameObjects.Container {
     this.worldParams = params;
   }
 
+  setVFX(vfx: VFXManager): void {
+    this.vfx = vfx;
+  }
+
   update(dt: number, input: InputState): void {
     if (!this.worldParams) return;
 
@@ -595,9 +601,15 @@ export class Player extends Phaser.GameObjects.Container {
       this.hammerGfx.setVisible(true);
     }
     if (this.isAttacking) {
+      const prevPhase = this.attackPhase;
       this.attackTimer -= dt;
       this.attackPhase = 1 - (this.attackTimer / (PHYSICS.HAMMER_COOLDOWN * 0.5));
       this.drawHammer();
+      // VFX: sparks when hammer reaches peak swing
+      if (prevPhase < 0.5 && this.attackPhase >= 0.5) {
+        const dir = this.facingRight ? 1 : -1;
+        this.vfx?.spawnAttackSparks(this.x + dir * 32, this.y - 15, this.facingRight);
+      }
       if (this.attackTimer <= 0) {
         this.isAttacking = false;
         this.hammerGfx.setVisible(false);
@@ -633,10 +645,14 @@ export class Player extends Phaser.GameObjects.Container {
       this.jumpsLeft--;
       this.jumpBufferTimer = 0;
       this.coyoteTimer = 0;
+      // VFX: ground dust puff
+      this.vfx?.spawnJumpDust(this.x, this.y + 24, false);
     } else if (input.jumpJustPressed && !canJump && this.jumpsLeft > 0 && this.worldParams.doubleJumpEnabled) {
       body.velocity.y = PHYSICS.DOUBLE_JUMP_FORCE * this.worldParams.jumpMultiplier;
       this.jumpsLeft--;
       this.state = 'DOUBLE_JUMP';
+      // VFX: blue ring burst for double jump
+      this.vfx?.spawnJumpDust(this.x, this.y, true);
     }
 
     // Variable jump height
@@ -654,6 +670,9 @@ export class Player extends Phaser.GameObjects.Container {
     // Land detection
     if (!this.wasGrounded && this.isGrounded) {
       this.landTimer = 0.1;
+      // VFX: landing dust — intensity based on fall speed
+      const landSpeed = Math.abs(body.velocity.y);
+      this.vfx?.spawnLandDust(this.x, this.y + 24, landSpeed);
       if (this.jumpBufferTimer > 0) {
         body.velocity.y = PHYSICS.JUMP_FORCE * this.worldParams.jumpMultiplier;
         this.jumpBufferTimer = 0;
@@ -662,6 +681,10 @@ export class Player extends Phaser.GameObjects.Container {
     }
 
     this.updateState(body);
+    // VFX: run dust under feet
+    if (this.state === 'RUN' && this.isGrounded) {
+      this.vfx?.spawnRunDust(this.x, this.y + 24);
+    }
     this.updateVisuals();
   }
 

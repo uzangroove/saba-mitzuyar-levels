@@ -166,6 +166,71 @@ export const PALETTES: Record<string, LevelPalette> = {
     platformTop: '#5555aa',
     ambientLight: 0x4444aa,
   },
+
+  // ============================================================
+  // CRAYON WORLD — פלטות עפרונות צבעוניים
+  // צבעים עזים, ילדותיים, שמחים
+  // ============================================================
+  CRAYON_SUNNY: {
+    skyTop: '#87CEEB',
+    skyBottom: '#FFFACD',
+    cloud: '#FFFFFF',
+    hillFar: '#90EE90',
+    hillNear: '#32CD32',
+    platformFill: '#8B4513',
+    platformTop: '#FF6347',
+    ambientLight: 0xFFEE88,
+  },
+  CRAYON_RAINBOW: {
+    skyTop: '#FF69B4',
+    skyBottom: '#FFD700',
+    cloud: '#FFF0F5',
+    hillFar: '#FF8C00',
+    hillNear: '#FF4500',
+    platformFill: '#9400D3',
+    platformTop: '#00CED1',
+    ambientLight: 0xFFBBCC,
+  },
+  CRAYON_GARDEN: {
+    skyTop: '#00FA9A',
+    skyBottom: '#ADFF2F',
+    cloud: '#F0FFF0',
+    hillFar: '#228B22',
+    hillNear: '#7CFC00',
+    platformFill: '#8B6914',
+    platformTop: '#FF1493',
+    ambientLight: 0xCCFFCC,
+  },
+  CRAYON_CLOUD: {
+    skyTop: '#B0E0E6',
+    skyBottom: '#F0F8FF',
+    cloud: '#FFFFFF',
+    hillFar: '#87CEEB',
+    hillNear: '#ADD8E6',
+    platformFill: '#4169E1',
+    platformTop: '#FF69B4',
+    ambientLight: 0xEEF8FF,
+  },
+  CRAYON_CANDY: {
+    skyTop: '#FF69B4',
+    skyBottom: '#FFB6C1',
+    cloud: '#FFF0F5',
+    hillFar: '#FF1493',
+    hillNear: '#FF69B4',
+    platformFill: '#DC143C',
+    platformTop: '#FF69B4',
+    ambientLight: 0xFFCCEE,
+  },
+  CRAYON_NIGHT: {
+    skyTop: '#191970',
+    skyBottom: '#4B0082',
+    cloud: '#9370DB',
+    hillFar: '#2E0854',
+    hillNear: '#4B0082',
+    platformFill: '#800080',
+    platformTop: '#FFD700',
+    ambientLight: 0xAABBFF,
+  },
 };
 
 // World-to-palette mapping (default, levels can override)
@@ -174,4 +239,5 @@ export const WORLD_DEFAULT_PALETTE: Record<string, string> = {
   water: 'DEEP_OCEAN',
   sky: 'SKY_HIGH',
   space: 'SPACE_VOID',
+  crayon: 'CRAYON_SUNNY',
 };

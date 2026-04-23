@@ -1,0 +1,17 @@
+{
+  "total_tests": 11,
+  "passed": 11,
+  "failed": 0,
+  "bugs": [],
+  "gameplay_issues": [
+    {
+      "level": 0,
+      "type": "Level Availability",
+      "description": "Only 0 levels found, expected 40+",
+      "timestamp": "2026-04-04T22:06:29.534535"
+    }
+  ],
+  "start_time": "2026-04-04T22:04:55.536206",
+  "duration": 128.78396320343018,
+  "end_time": "2026-04-04T22:07:04.323907"
+}

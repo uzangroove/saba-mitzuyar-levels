@@ -11,7 +11,11 @@
       "Bash(find /c/claude_source/saba-mitzuyar-levels/src -type f -name *.ts)",
       "Bash(ls \"C:\\\\claude_source\\\\saba-mitzuyar-levels\\\\public\\\\assets\\\\sprites\"\" 2>&1 && echo \"---\" && ls \"C:claude_sourcesaba-mitzuyar-levelspublic\"\")",
       "Bash(dir /b \"C:\\\\claude_source\\\\saba-mitzuyar-levels\\\\public\")",
-      "Bash(dir /b \"C:\\\\claude_source\\\\saba-mitzuyar-levels\\\\public\\\\assets\\\\sprites\")"
+      "Bash(dir /b \"C:\\\\claude_source\\\\saba-mitzuyar-levels\\\\public\\\\assets\\\\sprites\")",
+      "Bash(node -e \":*)",
+      "Bash(npm run:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(ffmpeg -version)"
     ]
   }
 }

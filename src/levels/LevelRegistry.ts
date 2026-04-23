@@ -31,7 +31,7 @@ export interface PlatformConfig {
 
 export interface LevelData {
   id: number;
-  worldType: 'earth' | 'water' | 'sky' | 'space';
+  worldType: 'earth' | 'water' | 'sky' | 'space' | 'crayon';
   paletteName: string;
   music: string;
   spawnPoint: { x: number; y: number };
@@ -763,6 +763,774 @@ const spaceBoss40: LevelData = {
 };
 
 
+
+// ============================================================
+// CRAYON WORLD — רמות 41-60
+// ============================================================
+
+// ---- LEVEL 41: שמש מחייכת — Tutorial Crayon ----
+const crayonLevel41: LevelData = {
+  id: 41, worldType: 'crayon', paletteName: 'CRAYON_SUNNY', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 430 },
+  goalX: 1600, goalY: 380,
+  platforms: [
+    { x: 0,    y: 480, width: 2000, height: 40 },  // קרקע
+    { x: 260,  y: 390, width: 150, height: 22 },
+    { x: 490,  y: 320, width: 130, height: 22 },
+    { x: 700,  y: 250, width: 120, height: 22 },
+    { x: 880,  y: 320, width: 140, height: 22 },
+    { x: 1060, y: 390, width: 110, height: 22 },
+    { x: 1220, y: 310, width: 130, height: 22 },
+    { x: 1420, y: 380, width: 160, height: 22 },
+    { x: 1560, y: 290, width: 120, height: 22 },
+  ],
+  enemies: [
+    { type: 'monster1', x: 350,  y: 445, patrolDistance: 160, variant: 0 },
+    { type: 'monster2', x: 820,  y: 445, patrolDistance: 140, variant: 0 },
+    { type: 'monster1', x: 1200, y: 445, patrolDistance: 180, variant: 0 },
+  ],
+  coins: [
+    { x: 310, y: 355 }, { x: 540, y: 285 }, { x: 740, y: 215 },
+    { x: 930, y: 285 }, { x: 1110, y: 355 }, { x: 1270, y: 275 },
+    { x: 1470, y: 345 }, { x: 1590, y: 255 },
+  ],
+  timeLimit: 0, parallaxLayers: 2,
+};
+
+// ---- LEVEL 42: גשר הקשת ----
+const crayonLevel42: LevelData = {
+  id: 42, worldType: 'crayon', paletteName: 'CRAYON_RAINBOW', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 430 },
+  goalX: 1900, goalY: 350,
+  platforms: [
+    { x: 0,    y: 480, width: 260, height: 40 },
+    { x: 320,  y: 420, width: 100, height: 22 },
+    { x: 480,  y: 360, width: 100, height: 22 },
+    { x: 640,  y: 300, width: 100, height: 22 },
+    { x: 800,  y: 240, width: 120, height: 22 },
+    { x: 980,  y: 300, width: 100, height: 22 },
+    { x: 1140, y: 360, width: 100, height: 22 },
+    { x: 1300, y: 420, width: 100, height: 22 },
+    { x: 1460, y: 360, width: 120, height: 22 },
+    { x: 1640, y: 290, width: 120, height: 22 },
+    { x: 1820, y: 360, width: 160, height: 22 },
+    { x: 1800, y: 480, width: 300, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster3', x: 360,  y: 395, patrolDistance: 80,  variant: 0 },
+    { type: 'monster1', x: 830,  y: 215, patrolDistance: 100, variant: 1 },
+    { type: 'monster3', x: 1480, y: 335, patrolDistance: 100, variant: 0 },
+    { type: 'monster2', x: 1660, y: 265, patrolDistance: 100, variant: 1 },
+  ],
+  coins: [
+    { x: 360, y: 385 }, { x: 520, y: 325 }, { x: 680, y: 265 },
+    { x: 850, y: 205 }, { x: 1020, y: 265 }, { x: 1180, y: 325 },
+    { x: 1500, y: 255 }, { x: 1680, y: 255 }, { x: 1880, y: 325 },
+  ],
+  timeLimit: 0, parallaxLayers: 2,
+};
+
+// ---- LEVEL 43: יער הפרחים ----
+const crayonLevel43: LevelData = {
+  id: 43, worldType: 'crayon', paletteName: 'CRAYON_GARDEN', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 430 },
+  goalX: 2100, goalY: 360,
+  platforms: [
+    { x: 0,    y: 480, width: 220, height: 40 },
+    { x: 280,  y: 400, width: 120, height: 22 },
+    { x: 280,  y: 310, width: 80,  height: 22, type: 'passthrough' },
+    { x: 460,  y: 350, width: 100, height: 22 },
+    { x: 620,  y: 280, width: 120, height: 22 },
+    { x: 800,  y: 400, width: 100, height: 22, type: 'moving', moveX: 80, moveSpeed: 1.0 },
+    { x: 960,  y: 320, width: 120, height: 22 },
+    { x: 1140, y: 240, width: 100, height: 22 },
+    { x: 1300, y: 320, width: 100, height: 22 },
+    { x: 1460, y: 400, width: 100, height: 22, type: 'moving', moveX: 90, moveSpeed: 1.1 },
+    { x: 1640, y: 330, width: 120, height: 22 },
+    { x: 1820, y: 260, width: 100, height: 22 },
+    { x: 1980, y: 340, width: 160, height: 22 },
+    { x: 1960, y: 480, width: 260, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster2', x: 320,  y: 375, patrolDistance: 100, variant: 0 },
+    { type: 'monster4', x: 660,  y: 255, patrolDistance: 100, variant: 0 },
+    { type: 'monster2', x: 1000, y: 295, patrolDistance: 100, variant: 1 },
+    { type: 'monster4', x: 1680, y: 305, patrolDistance: 100, variant: 0 },
+    { type: 'monster1', x: 2000, y: 315, patrolDistance: 140, variant: 1 },
+  ],
+  coins: [
+    { x: 320, y: 375 }, { x: 500, y: 315 }, { x: 660, y: 245 },
+    { x: 1000, y: 285 }, { x: 1180, y: 205 }, { x: 1340, y: 285 },
+    { x: 1680, y: 295 }, { x: 1860, y: 225 }, { x: 2020, y: 305 },
+  ],
+  timeLimit: 0, parallaxLayers: 2,
+};
+
+// ---- LEVEL 44: ענני כותנה ----
+const crayonLevel44: LevelData = {
+  id: 44, worldType: 'crayon', paletteName: 'CRAYON_CLOUD', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 400 },
+  goalX: 2200, goalY: 320,
+  platforms: [
+    { x: 0,    y: 440, width: 200, height: 22 },
+    { x: 260,  y: 380, width: 110, height: 22, type: 'passthrough' },
+    { x: 440,  y: 320, width: 110, height: 22, type: 'passthrough' },
+    { x: 620,  y: 260, width: 110, height: 22, type: 'passthrough' },
+    { x: 800,  y: 340, width: 110, height: 22, type: 'passthrough' },
+    { x: 980,  y: 400, width: 200, height: 22 },
+    { x: 1240, y: 340, width: 110, height: 22, type: 'passthrough' },
+    { x: 1420, y: 270, width: 110, height: 22, type: 'passthrough' },
+    { x: 1600, y: 340, width: 110, height: 22, type: 'passthrough' },
+    { x: 1780, y: 400, width: 110, height: 22 },
+    { x: 1960, y: 330, width: 120, height: 22 },
+    { x: 2140, y: 260, width: 160, height: 22 },
+    { x: 2120, y: 440, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster3', x: 290,  y: 355, patrolDistance: 90,  variant: 0 },
+    { type: 'monster5', x: 650,  y: 235, patrolDistance: 90,  variant: 0 },
+    { type: 'monster3', x: 1270, y: 315, patrolDistance: 90,  variant: 1 },
+    { type: 'monster5', x: 1450, y: 245, patrolDistance: 90,  variant: 1 },
+    { type: 'monster3', x: 2000, y: 305, patrolDistance: 100, variant: 0 },
+  ],
+  coins: [
+    { x: 300, y: 345 }, { x: 480, y: 285 }, { x: 660, y: 225 },
+    { x: 840, y: 305 }, { x: 1280, y: 305 }, { x: 1460, y: 235 },
+    { x: 1640, y: 305 }, { x: 2000, y: 295 }, { x: 2190, y: 225 },
+  ],
+  timeLimit: 0, parallaxLayers: 3,
+};
+
+// ---- LEVEL 45: גשרים מתנדנדים ----
+const crayonLevel45: LevelData = {
+  id: 45, worldType: 'crayon', paletteName: 'CRAYON_SUNNY', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 420 },
+  goalX: 2300, goalY: 350,
+  platforms: [
+    { x: 0,    y: 460, width: 220, height: 40 },
+    { x: 280,  y: 400, width: 100, height: 22, type: 'moving', moveX: 100, moveSpeed: 0.9 },
+    { x: 440,  y: 330, width: 100, height: 22, type: 'moving', moveY: 60,  moveSpeed: 1.0 },
+    { x: 600,  y: 400, width: 100, height: 22, type: 'moving', moveX: 80,  moveSpeed: 1.1 },
+    { x: 760,  y: 460, width: 220, height: 40 },
+    { x: 1040, y: 380, width: 100, height: 22, type: 'moving', moveX: 90,  moveSpeed: 0.8 },
+    { x: 1200, y: 300, width: 100, height: 22, type: 'moving', moveY: 70,  moveSpeed: 1.2 },
+    { x: 1360, y: 380, width: 100, height: 22, type: 'moving', moveX: 100, moveSpeed: 1.0 },
+    { x: 1520, y: 460, width: 220, height: 40 },
+    { x: 1800, y: 380, width: 110, height: 22, type: 'moving', moveX: 80,  moveSpeed: 1.3 },
+    { x: 1980, y: 300, width: 110, height: 22, type: 'moving', moveY: 80,  moveSpeed: 1.1 },
+    { x: 2160, y: 360, width: 180, height: 22 },
+    { x: 2140, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster4', x: 820,  y: 435, patrolDistance: 160, variant: 0 },
+    { type: 'monster4', x: 1580, y: 435, patrolDistance: 180, variant: 1 },
+    { type: 'monster5', x: 2200, y: 335, patrolDistance: 140, variant: 0 },
+  ],
+  coins: [
+    { x: 310, y: 365 }, { x: 470, y: 295 }, { x: 640, y: 365 },
+    { x: 1080, y: 345 }, { x: 1240, y: 265 }, { x: 1400, y: 345 },
+    { x: 1840, y: 345 }, { x: 2020, y: 265 }, { x: 2200, y: 325 },
+  ],
+  timeLimit: 0, parallaxLayers: 2,
+};
+
+// ---- LEVEL 46: מפלצות קשתות ----
+const crayonLevel46: LevelData = {
+  id: 46, worldType: 'crayon', paletteName: 'CRAYON_RAINBOW', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 420 },
+  goalX: 2400, goalY: 330,
+  platforms: [
+    { x: 0,    y: 460, width: 220, height: 40 },
+    { x: 280,  y: 380, width: 130, height: 22 },
+    { x: 480,  y: 310, width: 110, height: 22 },
+    { x: 660,  y: 380, width: 130, height: 22 },
+    { x: 860,  y: 460, width: 180, height: 40 },
+    { x: 1100, y: 380, width: 110, height: 22 },
+    { x: 1270, y: 300, width: 110, height: 22 },
+    { x: 1440, y: 380, width: 110, height: 22 },
+    { x: 1620, y: 300, width: 110, height: 22 },
+    { x: 1800, y: 380, width: 110, height: 22 },
+    { x: 1980, y: 460, width: 180, height: 40 },
+    { x: 2220, y: 370, width: 110, height: 22 },
+    { x: 2380, y: 300, width: 200, height: 22 },
+    { x: 2360, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster2', x: 320,  y: 355, patrolDistance: 110, variant: 0 },
+    { type: 'monster4', x: 520,  y: 285, patrolDistance: 90,  variant: 1 },
+    { type: 'monster2', x: 700,  y: 355, patrolDistance: 110, variant: 0 },
+    { type: 'monster5', x: 1140, y: 355, patrolDistance: 90,  variant: 0 },
+    { type: 'monster4', x: 1310, y: 275, patrolDistance: 90,  variant: 1 },
+    { type: 'monster5', x: 1660, y: 275, patrolDistance: 90,  variant: 0 },
+    { type: 'monster2', x: 2260, y: 345, patrolDistance: 90,  variant: 1 },
+  ],
+  coins: [
+    { x: 320, y: 345 }, { x: 520, y: 275 }, { x: 700, y: 345 },
+    { x: 1140, y: 345 }, { x: 1310, y: 265 }, { x: 1480, y: 345 },
+    { x: 1660, y: 265 }, { x: 1840, y: 345 }, { x: 2420, y: 265 },
+  ],
+  timeLimit: 0, parallaxLayers: 2,
+};
+
+// ---- LEVEL 47: מגדל הצבעים ----
+const crayonLevel47: LevelData = {
+  id: 47, worldType: 'crayon', paletteName: 'CRAYON_GARDEN', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 420 },
+  goalX: 2500, goalY: 150,
+  platforms: [
+    { x: 0,    y: 460, width: 220, height: 40 },
+    { x: 260,  y: 400, width: 110, height: 22 },
+    { x: 420,  y: 340, width: 110, height: 22 },
+    { x: 580,  y: 280, width: 110, height: 22 },
+    { x: 740,  y: 220, width: 110, height: 22 },
+    { x: 900,  y: 160, width: 120, height: 22 },
+    { x: 1060, y: 220, width: 110, height: 22 },
+    { x: 1220, y: 280, width: 110, height: 22 },
+    { x: 1380, y: 340, width: 110, height: 22 },
+    { x: 1540, y: 260, width: 110, height: 22 },
+    { x: 1700, y: 180, width: 110, height: 22 },
+    { x: 1860, y: 240, width: 110, height: 22 },
+    { x: 2020, y: 180, width: 110, height: 22 },
+    { x: 2180, y: 200, width: 110, height: 22 },
+    { x: 2360, y: 160, width: 200, height: 22 },
+    { x: 2340, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster3', x: 300,  y: 375, patrolDistance: 90,  variant: 0 },
+    { type: 'monster5', x: 620,  y: 255, patrolDistance: 90,  variant: 0 },
+    { type: 'monster3', x: 780,  y: 195, patrolDistance: 90,  variant: 1 },
+    { type: 'monster5', x: 1260, y: 255, patrolDistance: 90,  variant: 0 },
+    { type: 'monster3', x: 1580, y: 235, patrolDistance: 90,  variant: 1 },
+    { type: 'monster5', x: 1740, y: 155, patrolDistance: 90,  variant: 0 },
+    { type: 'monster6', x: 2200, y: 175, patrolDistance: 80,  variant: 0 },
+  ],
+  coins: [
+    { x: 300, y: 365 }, { x: 460, y: 305 }, { x: 620, y: 245 },
+    { x: 780, y: 185 }, { x: 940, y: 125 }, { x: 1580, y: 225 },
+    { x: 1740, y: 145 }, { x: 2060, y: 145 }, { x: 2400, y: 125 },
+  ],
+  timeLimit: 0, parallaxLayers: 3,
+};
+
+// ---- LEVEL 48: גבעות קפיצה ----
+const crayonLevel48: LevelData = {
+  id: 48, worldType: 'crayon', paletteName: 'CRAYON_SUNNY', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 420 },
+  goalX: 2600, goalY: 350,
+  platforms: [
+    { x: 0,    y: 460, width: 200, height: 40 },
+    { x: 260,  y: 380, width: 90,  height: 22, type: 'crumbling' },
+    { x: 410,  y: 320, width: 90,  height: 22, type: 'crumbling' },
+    { x: 560,  y: 380, width: 90,  height: 22, type: 'crumbling' },
+    { x: 710,  y: 460, width: 180, height: 40 },
+    { x: 960,  y: 380, width: 110, height: 22 },
+    { x: 1130, y: 300, width: 90,  height: 22, type: 'crumbling' },
+    { x: 1280, y: 380, width: 110, height: 22 },
+    { x: 1440, y: 300, width: 90,  height: 22, type: 'crumbling' },
+    { x: 1590, y: 380, width: 110, height: 22 },
+    { x: 1750, y: 460, width: 180, height: 40 },
+    { x: 2000, y: 380, width: 90,  height: 22, type: 'crumbling' },
+    { x: 2150, y: 300, width: 90,  height: 22, type: 'crumbling' },
+    { x: 2300, y: 380, width: 90,  height: 22, type: 'crumbling' },
+    { x: 2460, y: 310, width: 200, height: 22 },
+    { x: 2440, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster1', x: 760,  y: 435, patrolDistance: 140, variant: 0 },
+    { type: 'monster4', x: 1000, y: 355, patrolDistance: 120, variant: 1 },
+    { type: 'monster1', x: 1630, y: 355, patrolDistance: 110, variant: 0 },
+    { type: 'monster4', x: 1800, y: 435, patrolDistance: 140, variant: 1 },
+    { type: 'monster6', x: 2500, y: 285, patrolDistance: 160, variant: 0 },
+  ],
+  coins: [
+    { x: 290, y: 345 }, { x: 440, y: 285 }, { x: 590, y: 345 },
+    { x: 1000, y: 345 }, { x: 1165, y: 265 }, { x: 1480, y: 265 },
+    { x: 2040, y: 345 }, { x: 2190, y: 265 }, { x: 2500, y: 275 },
+  ],
+  timeLimit: 0, parallaxLayers: 2,
+};
+
+// ---- LEVEL 49: הכפר הצבעוני ----
+const crayonLevel49: LevelData = {
+  id: 49, worldType: 'crayon', paletteName: 'CRAYON_CLOUD', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 410 },
+  goalX: 2700, goalY: 280,
+  platforms: [
+    { x: 0,    y: 460, width: 220, height: 40 },
+    { x: 280,  y: 390, width: 120, height: 22 },
+    { x: 460,  y: 320, width: 100, height: 22, type: 'moving', moveX: 80, moveSpeed: 1.0 },
+    { x: 620,  y: 250, width: 120, height: 22 },
+    { x: 800,  y: 320, width: 100, height: 22 },
+    { x: 960,  y: 390, width: 120, height: 22, type: 'crumbling' },
+    { x: 1140, y: 320, width: 100, height: 22, type: 'moving', moveY: 70, moveSpeed: 1.1 },
+    { x: 1300, y: 250, width: 120, height: 22 },
+    { x: 1480, y: 320, width: 100, height: 22, type: 'crumbling' },
+    { x: 1640, y: 390, width: 120, height: 22 },
+    { x: 1820, y: 310, width: 110, height: 22, type: 'moving', moveX: 90, moveSpeed: 1.2 },
+    { x: 2000, y: 240, width: 120, height: 22 },
+    { x: 2180, y: 310, width: 110, height: 22 },
+    { x: 2360, y: 240, width: 120, height: 22 },
+    { x: 2540, y: 300, width: 200, height: 22 },
+    { x: 2520, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster2', x: 320,  y: 365, patrolDistance: 100, variant: 0 },
+    { type: 'monster5', x: 660,  y: 225, patrolDistance: 100, variant: 0 },
+    { type: 'monster2', x: 840,  y: 295, patrolDistance: 80,  variant: 1 },
+    { type: 'monster5', x: 1340, y: 225, patrolDistance: 100, variant: 1 },
+    { type: 'monster2', x: 1680, y: 365, patrolDistance: 100, variant: 0 },
+    { type: 'monster6', x: 2040, y: 215, patrolDistance: 100, variant: 0 },
+    { type: 'monster5', x: 2400, y: 215, patrolDistance: 100, variant: 1 },
+  ],
+  coins: [
+    { x: 320, y: 355 }, { x: 500, y: 285 }, { x: 660, y: 215 },
+    { x: 1340, y: 215 }, { x: 1520, y: 285 }, { x: 2040, y: 205 },
+    { x: 2220, y: 275 }, { x: 2400, y: 205 }, { x: 2590, y: 265 },
+  ],
+  timeLimit: 0, parallaxLayers: 2,
+};
+
+// ---- LEVEL 50: BOSS — גמד הציורים הענק ----
+const crayonBoss50: LevelData = {
+  id: 50, worldType: 'crayon', paletteName: 'CRAYON_RAINBOW', music: 'boss_theme',
+  isBoss: true,
+  spawnPoint: { x: 80, y: 400 },
+  goalX: 1600, goalY: 380,
+  platforms: [
+    { x: 0,    y: 460, width: 1800, height: 40 },
+    { x: 200,  y: 350, width: 160, height: 22 },
+    { x: 500,  y: 280, width: 130, height: 22, type: 'passthrough' },
+    { x: 760,  y: 350, width: 160, height: 22 },
+    { x: 1040, y: 280, width: 130, height: 22, type: 'passthrough' },
+    { x: 1300, y: 350, width: 160, height: 22 },
+    { x: 550,  y: 200, width: 100, height: 22, type: 'passthrough' },
+    { x: 800,  y: 180, width: 140, height: 22 },
+    { x: 1060, y: 200, width: 100, height: 22, type: 'passthrough' },
+  ],
+  enemies: [],
+  coins: [
+    { x: 260, y: 315 }, { x: 540, y: 245 }, { x: 800, y: 315 },
+    { x: 580, y: 165 }, { x: 840, y: 145 }, { x: 1080, y: 165 },
+    { x: 1080, y: 245 }, { x: 1360, y: 315 },
+  ],
+  timeLimit: 0, parallaxLayers: 3,
+};
+
+// ---- LEVEL 51: פרפרים וציפורים ----
+const crayonLevel51: LevelData = {
+  id: 51, worldType: 'crayon', paletteName: 'CRAYON_GARDEN', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 410 },
+  goalX: 2500, goalY: 300,
+  platforms: [
+    { x: 0,    y: 460, width: 200, height: 40 },
+    { x: 260,  y: 390, width: 110, height: 22 },
+    { x: 440,  y: 320, width: 110, height: 22, type: 'moving', moveX: 70, moveSpeed: 1.0 },
+    { x: 620,  y: 390, width: 110, height: 22 },
+    { x: 800,  y: 310, width: 110, height: 22 },
+    { x: 980,  y: 380, width: 200, height: 40 },
+    { x: 1240, y: 310, width: 110, height: 22, type: 'moving', moveX: 80, moveSpeed: 1.1 },
+    { x: 1420, y: 240, width: 110, height: 22 },
+    { x: 1600, y: 310, width: 110, height: 22, type: 'crumbling' },
+    { x: 1780, y: 380, width: 110, height: 22 },
+    { x: 1960, y: 300, width: 110, height: 22, type: 'moving', moveY: 70, moveSpeed: 1.2 },
+    { x: 2140, y: 230, width: 110, height: 22 },
+    { x: 2320, y: 300, width: 200, height: 22 },
+    { x: 2300, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster3', x: 300,  y: 365, patrolDistance: 90,  variant: 0 },
+    { type: 'monster1', x: 660,  y: 365, patrolDistance: 90,  variant: 1 },
+    { type: 'monster3', x: 840,  y: 285, patrolDistance: 90,  variant: 0 },
+    { type: 'monster4', x: 1460, y: 215, patrolDistance: 90,  variant: 0 },
+    { type: 'monster3', x: 1820, y: 355, patrolDistance: 90,  variant: 1 },
+    { type: 'monster6', x: 2180, y: 205, patrolDistance: 100, variant: 0 },
+  ],
+  coins: [
+    { x: 300, y: 355 }, { x: 480, y: 285 }, { x: 660, y: 355 },
+    { x: 840, y: 275 }, { x: 1280, y: 275 }, { x: 1460, y: 205 },
+    { x: 2000, y: 265 }, { x: 2180, y: 195 }, { x: 2380, y: 265 },
+  ],
+  timeLimit: 0, parallaxLayers: 2,
+};
+
+// ---- LEVEL 52: ממתקים ועוגות ----
+const crayonLevel52: LevelData = {
+  id: 52, worldType: 'crayon', paletteName: 'CRAYON_CANDY', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 410 },
+  goalX: 2600, goalY: 280,
+  platforms: [
+    { x: 0,    y: 460, width: 200, height: 40 },
+    { x: 260,  y: 380, width: 120, height: 22 },
+    { x: 440,  y: 300, width: 100, height: 22, type: 'passthrough' },
+    { x: 600,  y: 380, width: 120, height: 22 },
+    { x: 780,  y: 300, width: 100, height: 22, type: 'passthrough' },
+    { x: 940,  y: 380, width: 120, height: 22 },
+    { x: 1120, y: 460, width: 200, height: 40 },
+    { x: 1380, y: 380, width: 120, height: 22 },
+    { x: 1560, y: 300, width: 100, height: 22, type: 'moving', moveX: 90, moveSpeed: 1.0 },
+    { x: 1740, y: 380, width: 120, height: 22 },
+    { x: 1920, y: 300, width: 100, height: 22, type: 'passthrough' },
+    { x: 2100, y: 380, width: 120, height: 22 },
+    { x: 2280, y: 300, width: 120, height: 22 },
+    { x: 2460, y: 230, width: 200, height: 22 },
+    { x: 2440, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster5', x: 300,  y: 355, patrolDistance: 100, variant: 0 },
+    { type: 'monster2', x: 640,  y: 355, patrolDistance: 100, variant: 1 },
+    { type: 'monster5', x: 980,  y: 355, patrolDistance: 100, variant: 0 },
+    { type: 'monster2', x: 1420, y: 355, patrolDistance: 100, variant: 0 },
+    { type: 'monster5', x: 1780, y: 355, patrolDistance: 100, variant: 1 },
+    { type: 'monster6', x: 2320, y: 275, patrolDistance: 110, variant: 0 },
+    { type: 'monster5', x: 2500, y: 205, patrolDistance: 160, variant: 1 },
+  ],
+  coins: [
+    { x: 300, y: 345 }, { x: 480, y: 265 }, { x: 640, y: 345 },
+    { x: 820, y: 265 }, { x: 980, y: 345 }, { x: 1600, y: 265 },
+    { x: 1780, y: 345 }, { x: 2320, y: 265 }, { x: 2510, y: 195 },
+  ],
+  timeLimit: 0, parallaxLayers: 2,
+};
+
+// ---- LEVEL 53: נהר הצבע ----
+const crayonLevel53: LevelData = {
+  id: 53, worldType: 'crayon', paletteName: 'CRAYON_CLOUD', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 400 },
+  goalX: 2800, goalY: 260,
+  platforms: [
+    { x: 0,    y: 460, width: 200, height: 40 },
+    { x: 260,  y: 390, width: 90,  height: 22, type: 'moving', moveX: 80, moveSpeed: 1.0 },
+    { x: 410,  y: 320, width: 90,  height: 22, type: 'moving', moveY: 60, moveSpeed: 1.1 },
+    { x: 560,  y: 390, width: 90,  height: 22, type: 'moving', moveX: 70, moveSpeed: 0.9 },
+    { x: 710,  y: 460, width: 160, height: 40 },
+    { x: 940,  y: 380, width: 110, height: 22 },
+    { x: 1110, y: 300, width: 90,  height: 22, type: 'moving', moveX: 80, moveSpeed: 1.2 },
+    { x: 1260, y: 380, width: 110, height: 22 },
+    { x: 1440, y: 300, width: 90,  height: 22, type: 'crumbling' },
+    { x: 1590, y: 380, width: 110, height: 22 },
+    { x: 1770, y: 460, width: 160, height: 40 },
+    { x: 2010, y: 370, width: 90,  height: 22, type: 'moving', moveX: 90, moveSpeed: 1.3 },
+    { x: 2160, y: 290, width: 90,  height: 22, type: 'moving', moveY: 70, moveSpeed: 1.1 },
+    { x: 2310, y: 370, width: 90,  height: 22, type: 'moving', moveX: 80, moveSpeed: 1.2 },
+    { x: 2480, y: 300, width: 120, height: 22 },
+    { x: 2660, y: 230, width: 200, height: 22 },
+    { x: 2640, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster4', x: 760,  y: 435, patrolDistance: 120, variant: 0 },
+    { type: 'monster2', x: 980,  y: 355, patrolDistance: 90,  variant: 1 },
+    { type: 'monster4', x: 1630, y: 355, patrolDistance: 90,  variant: 0 },
+    { type: 'monster2', x: 1830, y: 435, patrolDistance: 120, variant: 1 },
+    { type: 'monster6', x: 2520, y: 275, patrolDistance: 100, variant: 0 },
+    { type: 'monster4', x: 2700, y: 205, patrolDistance: 160, variant: 1 },
+  ],
+  coins: [
+    { x: 295, y: 355 }, { x: 445, y: 285 }, { x: 600, y: 355 },
+    { x: 980, y: 345 }, { x: 1150, y: 265 }, { x: 1480, y: 265 },
+    { x: 2050, y: 335 }, { x: 2200, y: 255 }, { x: 2700, y: 195 },
+  ],
+  timeLimit: 0, parallaxLayers: 3,
+};
+
+// ---- LEVEL 54: כוכבי ציור ----
+const crayonLevel54: LevelData = {
+  id: 54, worldType: 'crayon', paletteName: 'CRAYON_NIGHT', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 400 },
+  goalX: 2900, goalY: 240,
+  platforms: [
+    { x: 0,    y: 460, width: 200, height: 40 },
+    { x: 260,  y: 390, width: 110, height: 22 },
+    { x: 440,  y: 320, width: 90,  height: 22, type: 'passthrough' },
+    { x: 590,  y: 250, width: 90,  height: 22, type: 'passthrough' },
+    { x: 740,  y: 320, width: 90,  height: 22, type: 'passthrough' },
+    { x: 890,  y: 390, width: 110, height: 22 },
+    { x: 1060, y: 310, width: 90,  height: 22, type: 'crumbling' },
+    { x: 1210, y: 240, width: 110, height: 22 },
+    { x: 1380, y: 310, width: 90,  height: 22, type: 'crumbling' },
+    { x: 1540, y: 390, width: 110, height: 22 },
+    { x: 1710, y: 310, width: 90,  height: 22, type: 'moving', moveX: 80, moveSpeed: 1.1 },
+    { x: 1870, y: 240, width: 110, height: 22 },
+    { x: 2050, y: 310, width: 90,  height: 22, type: 'moving', moveY: 70, moveSpeed: 1.0 },
+    { x: 2210, y: 240, width: 110, height: 22 },
+    { x: 2390, y: 310, width: 100, height: 22 },
+    { x: 2560, y: 240, width: 120, height: 22 },
+    { x: 2740, y: 280, width: 200, height: 22 },
+    { x: 2720, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster6', x: 300,  y: 365, patrolDistance: 90,  variant: 0 },
+    { x: 620, y: 225, patrolDistance: 70,  variant: 1, type: 'monster3' },
+    { type: 'monster6', x: 930,  y: 365, patrolDistance: 90,  variant: 0 },
+    { type: 'monster3', x: 1250, y: 215, patrolDistance: 90,  variant: 1 },
+    { type: 'monster6', x: 1580, y: 365, patrolDistance: 90,  variant: 0 },
+    { type: 'monster3', x: 1910, y: 215, patrolDistance: 90,  variant: 1 },
+    { type: 'monster6', x: 2600, y: 215, patrolDistance: 110, variant: 0 },
+  ],
+  coins: [
+    { x: 300, y: 355 }, { x: 480, y: 285 }, { x: 625, y: 215 },
+    { x: 780, y: 285 }, { x: 1250, y: 205 }, { x: 1910, y: 205 },
+    { x: 2250, y: 205 }, { x: 2600, y: 205 }, { x: 2790, y: 245 },
+  ],
+  timeLimit: 0, parallaxLayers: 3,
+};
+
+// ---- LEVEL 55: הקרב הצבעוני ----
+const crayonLevel55: LevelData = {
+  id: 55, worldType: 'crayon', paletteName: 'CRAYON_RAINBOW', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 400 },
+  goalX: 3000, goalY: 220,
+  platforms: [
+    { x: 0,    y: 460, width: 200, height: 40 },
+    { x: 260,  y: 380, width: 100, height: 22, type: 'crumbling' },
+    { x: 420,  y: 310, width: 100, height: 22 },
+    { x: 580,  y: 380, width: 100, height: 22, type: 'crumbling' },
+    { x: 740,  y: 460, width: 160, height: 40 },
+    { x: 980,  y: 380, width: 100, height: 22 },
+    { x: 1140, y: 300, width: 100, height: 22, type: 'moving', moveX: 90, moveSpeed: 1.1 },
+    { x: 1300, y: 380, width: 100, height: 22 },
+    { x: 1460, y: 300, width: 100, height: 22, type: 'crumbling' },
+    { x: 1620, y: 380, width: 100, height: 22 },
+    { x: 1800, y: 460, width: 160, height: 40 },
+    { x: 2040, y: 370, width: 100, height: 22, type: 'moving', moveX: 80, moveSpeed: 1.2 },
+    { x: 2200, y: 290, width: 100, height: 22, type: 'crumbling' },
+    { x: 2360, y: 370, width: 100, height: 22 },
+    { x: 2520, y: 290, width: 100, height: 22, type: 'moving', moveY: 80, moveSpeed: 1.0 },
+    { x: 2680, y: 220, width: 120, height: 22 },
+    { x: 2840, y: 260, width: 200, height: 22 },
+    { x: 2820, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster5', x: 460,  y: 285, patrolDistance: 90,  variant: 0 },
+    { type: 'monster3', x: 800,  y: 435, patrolDistance: 120, variant: 1 },
+    { type: 'monster5', x: 1020, y: 355, patrolDistance: 90,  variant: 0 },
+    { type: 'monster3', x: 1340, y: 355, patrolDistance: 90,  variant: 1 },
+    { type: 'monster5', x: 1660, y: 355, patrolDistance: 90,  variant: 0 },
+    { type: 'monster3', x: 1860, y: 435, patrolDistance: 120, variant: 1 },
+    { type: 'monster6', x: 2400, y: 345, patrolDistance: 90,  variant: 0 },
+    { type: 'monster5', x: 2720, y: 195, patrolDistance: 110, variant: 1 },
+  ],
+  coins: [
+    { x: 460, y: 275 }, { x: 620, y: 345 }, { x: 1020, y: 345 },
+    { x: 1180, y: 265 }, { x: 1500, y: 265 }, { x: 2080, y: 335 },
+    { x: 2240, y: 255 }, { x: 2720, y: 185 }, { x: 2890, y: 225 },
+  ],
+  timeLimit: 0, parallaxLayers: 2,
+};
+
+// ---- LEVEL 56: מבוך הפרחים ----
+const crayonLevel56: LevelData = {
+  id: 56, worldType: 'crayon', paletteName: 'CRAYON_GARDEN', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 400 },
+  goalX: 3100, goalY: 200,
+  platforms: [
+    { x: 0,    y: 460, width: 200, height: 40 },
+    { x: 260,  y: 380, width: 120, height: 22 },
+    { x: 440,  y: 300, width: 100, height: 22, type: 'passthrough' },
+    { x: 600,  y: 220, width: 100, height: 22, type: 'passthrough' },
+    { x: 760,  y: 300, width: 100, height: 22, type: 'passthrough' },
+    { x: 920,  y: 380, width: 120, height: 22 },
+    { x: 1100, y: 300, width: 100, height: 22, type: 'crumbling' },
+    { x: 1260, y: 220, width: 120, height: 22 },
+    { x: 1440, y: 300, width: 100, height: 22, type: 'crumbling' },
+    { x: 1600, y: 380, width: 120, height: 22 },
+    { x: 1780, y: 300, width: 100, height: 22, type: 'moving', moveX: 80, moveSpeed: 1.1 },
+    { x: 1940, y: 220, width: 120, height: 22 },
+    { x: 2120, y: 300, width: 100, height: 22, type: 'moving', moveY: 70, moveSpeed: 1.2 },
+    { x: 2280, y: 220, width: 120, height: 22 },
+    { x: 2460, y: 300, width: 110, height: 22 },
+    { x: 2640, y: 220, width: 120, height: 22 },
+    { x: 2820, y: 270, width: 120, height: 22 },
+    { x: 2980, y: 200, width: 200, height: 22 },
+    { x: 2960, y: 460, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster4', x: 300,  y: 355, patrolDistance: 100, variant: 0 },
+    { type: 'monster2', x: 640,  y: 195, patrolDistance: 80,  variant: 1 },
+    { type: 'monster4', x: 960,  y: 355, patrolDistance: 100, variant: 0 },
+    { type: 'monster2', x: 1300, y: 195, patrolDistance: 100, variant: 1 },
+    { type: 'monster4', x: 1640, y: 355, patrolDistance: 100, variant: 0 },
+    { type: 'monster2', x: 1980, y: 195, patrolDistance: 100, variant: 1 },
+    { type: 'monster6', x: 2320, y: 195, patrolDistance: 100, variant: 0 },
+    { type: 'monster4', x: 2680, y: 195, patrolDistance: 100, variant: 1 },
+  ],
+  coins: [
+    { x: 300, y: 345 }, { x: 480, y: 265 }, { x: 640, y: 185 },
+    { x: 800, y: 265 }, { x: 1300, y: 185 }, { x: 1980, y: 185 },
+    { x: 2320, y: 185 }, { x: 2680, y: 185 }, { x: 3020, y: 165 },
+  ],
+  timeLimit: 0, parallaxLayers: 3,
+};
+
+// ---- LEVEL 57: ספינת הציורים ----
+const crayonLevel57: LevelData = {
+  id: 57, worldType: 'crayon', paletteName: 'CRAYON_CLOUD', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 390 },
+  goalX: 3200, goalY: 180,
+  platforms: [
+    { x: 0,    y: 440, width: 200, height: 40 },
+    { x: 260,  y: 370, width: 100, height: 22, type: 'moving', moveX: 90, moveSpeed: 1.0 },
+    { x: 420,  y: 300, width: 100, height: 22, type: 'moving', moveY: 60, moveSpeed: 1.1 },
+    { x: 580,  y: 370, width: 100, height: 22, type: 'moving', moveX: 80, moveSpeed: 0.9 },
+    { x: 740,  y: 440, width: 160, height: 40 },
+    { x: 980,  y: 360, width: 100, height: 22 },
+    { x: 1140, y: 280, width: 90,  height: 22, type: 'crumbling' },
+    { x: 1290, y: 360, width: 100, height: 22 },
+    { x: 1450, y: 280, width: 90,  height: 22, type: 'crumbling' },
+    { x: 1600, y: 360, width: 100, height: 22 },
+    { x: 1780, y: 440, width: 160, height: 40 },
+    { x: 2020, y: 360, width: 100, height: 22, type: 'moving', moveX: 90, moveSpeed: 1.2 },
+    { x: 2180, y: 280, width: 90,  height: 22, type: 'moving', moveY: 70, moveSpeed: 1.3 },
+    { x: 2340, y: 360, width: 100, height: 22, type: 'moving', moveX: 80, moveSpeed: 1.1 },
+    { x: 2510, y: 280, width: 100, height: 22 },
+    { x: 2690, y: 210, width: 110, height: 22 },
+    { x: 2870, y: 260, width: 110, height: 22 },
+    { x: 3060, y: 190, width: 200, height: 22 },
+    { x: 3040, y: 440, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster5', x: 800,  y: 415, patrolDistance: 120, variant: 0 },
+    { type: 'monster3', x: 1020, y: 335, patrolDistance: 90,  variant: 1 },
+    { type: 'monster5', x: 1640, y: 335, patrolDistance: 90,  variant: 0 },
+    { type: 'monster3', x: 1840, y: 415, patrolDistance: 120, variant: 1 },
+    { type: 'monster5', x: 2550, y: 255, patrolDistance: 90,  variant: 0 },
+    { type: 'monster6', x: 2730, y: 185, patrolDistance: 100, variant: 1 },
+    { type: 'monster5', x: 3100, y: 165, patrolDistance: 160, variant: 0 },
+  ],
+  coins: [
+    { x: 300, y: 335 }, { x: 460, y: 265 }, { x: 620, y: 335 },
+    { x: 1020, y: 325 }, { x: 1180, y: 245 }, { x: 1490, y: 245 },
+    { x: 2220, y: 245 }, { x: 2730, y: 175 }, { x: 3110, y: 155 },
+  ],
+  timeLimit: 0, parallaxLayers: 3,
+};
+
+// ---- LEVEL 58: מרוץ האצבעות ----
+const crayonLevel58: LevelData = {
+  id: 58, worldType: 'crayon', paletteName: 'CRAYON_CANDY', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 390 },
+  goalX: 3300, goalY: 160,
+  timeLimit: 90,
+  platforms: [
+    { x: 0,    y: 440, width: 200, height: 40 },
+    { x: 260,  y: 370, width: 90,  height: 22 },
+    { x: 410,  y: 300, width: 90,  height: 22 },
+    { x: 560,  y: 370, width: 90,  height: 22 },
+    { x: 710,  y: 300, width: 90,  height: 22 },
+    { x: 860,  y: 370, width: 90,  height: 22 },
+    { x: 1010, y: 440, width: 160, height: 40 },
+    { x: 1240, y: 360, width: 90,  height: 22, type: 'moving', moveX: 80, moveSpeed: 1.2 },
+    { x: 1390, y: 280, width: 90,  height: 22, type: 'moving', moveY: 70, moveSpeed: 1.3 },
+    { x: 1540, y: 360, width: 90,  height: 22, type: 'moving', moveX: 80, moveSpeed: 1.1 },
+    { x: 1690, y: 280, width: 90,  height: 22, type: 'crumbling' },
+    { x: 1840, y: 360, width: 90,  height: 22 },
+    { x: 1990, y: 440, width: 160, height: 40 },
+    { x: 2230, y: 360, width: 90,  height: 22, type: 'crumbling' },
+    { x: 2380, y: 280, width: 90,  height: 22, type: 'crumbling' },
+    { x: 2530, y: 360, width: 90,  height: 22, type: 'crumbling' },
+    { x: 2680, y: 280, width: 100, height: 22 },
+    { x: 2850, y: 210, width: 100, height: 22 },
+    { x: 3030, y: 260, width: 110, height: 22 },
+    { x: 3180, y: 190, width: 200, height: 22 },
+    { x: 3160, y: 440, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster6', x: 300,  y: 345, patrolDistance: 90,  variant: 0 },
+    { type: 'monster4', x: 600,  y: 345, patrolDistance: 90,  variant: 1 },
+    { type: 'monster6', x: 900,  y: 345, patrolDistance: 90,  variant: 0 },
+    { type: 'monster4', x: 1070, y: 415, patrolDistance: 120, variant: 1 },
+    { type: 'monster6', x: 1580, y: 335, patrolDistance: 80,  variant: 0 },
+    { type: 'monster4', x: 1880, y: 335, patrolDistance: 80,  variant: 1 },
+    { type: 'monster6', x: 2050, y: 415, patrolDistance: 120, variant: 0 },
+    { type: 'monster5', x: 2720, y: 255, patrolDistance: 90,  variant: 1 },
+    { type: 'monster6', x: 3220, y: 165, patrolDistance: 160, variant: 0 },
+  ],
+  coins: [
+    { x: 300, y: 335 }, { x: 450, y: 265 }, { x: 600, y: 335 },
+    { x: 1280, y: 325 }, { x: 1430, y: 245 }, { x: 1730, y: 245 },
+    { x: 2420, y: 245 }, { x: 2890, y: 175 }, { x: 3220, y: 155 },
+  ],
+  parallaxLayers: 2,
+};
+
+// ---- LEVEL 59: גן הפסלים ----
+const crayonLevel59: LevelData = {
+  id: 59, worldType: 'crayon', paletteName: 'CRAYON_NIGHT', music: 'crayon_theme',
+  spawnPoint: { x: 80, y: 390 },
+  goalX: 3400, goalY: 160,
+  platforms: [
+    { x: 0,    y: 440, width: 200, height: 40 },
+    { x: 260,  y: 370, width: 110, height: 22 },
+    { x: 440,  y: 300, width: 90,  height: 22, type: 'passthrough' },
+    { x: 590,  y: 230, width: 90,  height: 22, type: 'passthrough' },
+    { x: 740,  y: 300, width: 90,  height: 22, type: 'passthrough' },
+    { x: 890,  y: 370, width: 110, height: 22 },
+    { x: 1070, y: 290, width: 90,  height: 22, type: 'crumbling' },
+    { x: 1220, y: 220, width: 110, height: 22 },
+    { x: 1400, y: 290, width: 90,  height: 22, type: 'crumbling' },
+    { x: 1560, y: 370, width: 110, height: 22 },
+    { x: 1740, y: 290, width: 90,  height: 22, type: 'moving', moveX: 80, moveSpeed: 1.2 },
+    { x: 1900, y: 220, width: 110, height: 22 },
+    { x: 2080, y: 290, width: 90,  height: 22, type: 'moving', moveY: 70, moveSpeed: 1.3 },
+    { x: 2240, y: 220, width: 110, height: 22 },
+    { x: 2420, y: 290, width: 90,  height: 22, type: 'crumbling' },
+    { x: 2580, y: 220, width: 110, height: 22 },
+    { x: 2760, y: 290, width: 90,  height: 22, type: 'crumbling' },
+    { x: 2920, y: 220, width: 110, height: 22 },
+    { x: 3100, y: 270, width: 110, height: 22 },
+    { x: 3280, y: 200, width: 200, height: 22 },
+    { x: 3260, y: 440, width: 280, height: 40 },
+  ],
+  enemies: [
+    { type: 'monster6', x: 300,  y: 345, patrolDistance: 90,  variant: 0 },
+    { type: 'monster5', x: 625,  y: 205, patrolDistance: 70,  variant: 1 },
+    { type: 'monster6', x: 930,  y: 345, patrolDistance: 90,  variant: 0 },
+    { type: 'monster5', x: 1260, y: 195, patrolDistance: 90,  variant: 1 },
+    { type: 'monster6', x: 1600, y: 345, patrolDistance: 90,  variant: 0 },
+    { type: 'monster5', x: 1940, y: 195, patrolDistance: 90,  variant: 1 },
+    { type: 'monster6', x: 2280, y: 195, patrolDistance: 90,  variant: 0 },
+    { type: 'monster5', x: 2620, y: 195, patrolDistance: 90,  variant: 1 },
+    { type: 'monster6', x: 3320, y: 175, patrolDistance: 160, variant: 0 },
+  ],
+  coins: [
+    { x: 300, y: 335 }, { x: 475, y: 265 }, { x: 625, y: 195 },
+    { x: 780, y: 265 }, { x: 1260, y: 185 }, { x: 1940, y: 185 },
+    { x: 2280, y: 185 }, { x: 2620, y: 185 }, { x: 3320, y: 165 },
+  ],
+  timeLimit: 0, parallaxLayers: 3,
+};
+
+// ---- LEVEL 60: BOSS FINAL — המלך הצבעוני ----
+const crayonBoss60: LevelData = {
+  id: 60, worldType: 'crayon', paletteName: 'CRAYON_RAINBOW', music: 'boss_theme',
+  isBoss: true,
+  spawnPoint: { x: 80, y: 390 },
+  goalX: 1700, goalY: 350,
+  platforms: [
+    { x: 0,    y: 440, width: 1900, height: 40 },
+    { x: 180,  y: 330, width: 150, height: 22 },
+    { x: 440,  y: 260, width: 120, height: 22, type: 'passthrough' },
+    { x: 680,  y: 330, width: 150, height: 22 },
+    { x: 920,  y: 260, width: 120, height: 22, type: 'passthrough' },
+    { x: 1160, y: 330, width: 150, height: 22 },
+    { x: 1400, y: 260, width: 120, height: 22, type: 'passthrough' },
+    // High platforms
+    { x: 500,  y: 180, width: 100, height: 22, type: 'passthrough' },
+    { x: 780,  y: 160, width: 140, height: 22 },
+    { x: 1060, y: 180, width: 100, height: 22, type: 'passthrough' },
+    // Moving platforms
+    { x: 300,  y: 380, width: 90,  height: 22, type: 'moving', moveX: 60, moveSpeed: 1.0 },
+    { x: 1500, y: 380, width: 90,  height: 22, type: 'moving', moveX: 60, moveSpeed: 1.0 },
+  ],
+  enemies: [],
+  coins: [
+    { x: 220, y: 295 }, { x: 480, y: 225 }, { x: 720, y: 295 },
+    { x: 540, y: 145 }, { x: 820, y: 125 }, { x: 1100, y: 145 },
+    { x: 960, y: 225 }, { x: 1200, y: 295 }, { x: 1440, y: 225 },
+  ],
+  timeLimit: 0, parallaxLayers: 3,
+};
+
+
 export function getLevelData(id: number): LevelData | undefined {
   const extraLevels: LevelData[] = [
     // Earth
@@ -781,6 +1549,11 @@ export function getLevelData(id: number): LevelData | undefined {
     spaceLevel33, spaceLevel34,
     spaceLevel35, spaceLevel36, spaceLevel37, spaceLevel38, spaceLevel39,
     spaceBoss40,
+    // Crayon — ציורי ילדים
+    crayonLevel41, crayonLevel42, crayonLevel43, crayonLevel44, crayonLevel45,
+    crayonLevel46, crayonLevel47, crayonLevel48, crayonLevel49, crayonBoss50,
+    crayonLevel51, crayonLevel52, crayonLevel53, crayonLevel54, crayonLevel55,
+    crayonLevel56, crayonLevel57, crayonLevel58, crayonLevel59, crayonBoss60,
   ];
   const extra = extraLevels.find(l => l.id === id);
   if (extra) return extra;

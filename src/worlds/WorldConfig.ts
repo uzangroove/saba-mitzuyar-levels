@@ -70,11 +70,26 @@ export const WORLD_CONFIGS: Record<string, WorldParams> = {
     ambientParticles: 'stars',
     bgScrollSpeed: 0.3,
   },
+
+  crayon: {
+    name: 'Crayon',
+    gravityMultiplier: 0.82,   // קצת קל יותר — ציורי ילדים צפים
+    accelMultiplier: 1.15,     // תגובה מהירה — כיפי וזריז
+    jumpMultiplier: 1.2,       // קפיצות גבוהות ושמחות
+    frictionAir: 0.975,
+    maxFallSpeed: 700,
+    dashEnabled: true,
+    doubleJumpEnabled: true,
+    ambientParticles: 'crayonsparkles',
+    bgScrollSpeed: 1.1,
+  },
 };
 
 // Determine world type from level number (1-indexed)
 // 1-10: Earth, 11-20: Water, 21-30: Sky, 31-40: Space, repeat
 export function getWorldForLevel(level: number): string {
+  // Crayon world: levels 41-60
+  if (level >= 41 && level <= 60) return 'crayon';
   const cycle = ((level - 1) % 40);
   if (cycle < 10) return 'earth';
   if (cycle < 20) return 'water';

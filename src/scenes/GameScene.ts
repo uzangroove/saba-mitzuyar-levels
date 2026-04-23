@@ -14,6 +14,7 @@ import { PALETTES } from '../constants/palettes';
 import { getWorldConfig, getWorldForLevel } from '../worlds/WorldConfig';
 import { getLevelData, LevelData, PlatformConfig } from '../levels/LevelRegistry';
 import { PHYSICS } from '../constants/physics';
+import { VFXManager } from '../systems/VFXManager';
 
 interface CrumblingState {
   gfx: Phaser.GameObjects.Graphics;
@@ -55,12 +56,23 @@ export class GameScene extends Phaser.Scene {
   private bossDefeated: boolean = false;
   private worldKey: string = 'earth';
   private shadowGfx!: Phaser.GameObjects.Graphics;
+  private vfx!: VFXManager;
+  private vfxTimers: Phaser.Time.TimerEvent[] = [];
 
   // Combo
   private comboCount: number = 0;
   private comboTimer: number = 0;
 
   constructor() { super({ key: 'GameScene' }); }
+
+  preload(): void {
+    // טעינת ציורי הרקע של עולם הציורים
+    for (let i = 1; i <= 7; i++) {
+      if (!this.textures.exists(`bg_crayon_${i}`)) {
+        this.load.image(`bg_crayon_${i}`, `assets/backgrounds/bg_crayon_${i}.jpg`);
+      }
+    }
+  }
 
   init(data: { level?: number; lives?: number }): void {
     this.currentLevel = data?.level ?? 1;
@@ -164,6 +176,17 @@ export class GameScene extends Phaser.Scene {
     // Ambient particles
     this.startAmbientParticles();
 
+    // VFX Manager — upgrade all effects
+    this.vfx = new VFXManager(this);
+    this.vfxTimers = this.vfx.startWorldParticles(this.worldKey, W, H);
+    this.player.setVFX(this.vfx);
+
+    // Cleanup on scene shutdown
+    this.events.on('shutdown', () => {
+      this.vfxTimers.forEach(t => t.remove());
+      this.vfx?.destroy();
+    });
+
     // O key = skip to next level
     this.input.keyboard!.on('keydown-O', () => {
       this.completeLevel();
@@ -203,6 +226,30 @@ export class GameScene extends Phaser.Scene {
     const palette = PALETTES[this.levelData.paletteName] ?? PALETTES['DAY'];
 
     const toHex = (s: string) => parseInt(s.replace('#', ''), 16);
+
+    // ---- CRAYON WORLD — ציורי ילדים עם פרלקס ----
+    if (this.worldKey === 'crayon') {
+      // 4 ציורים — מחזור לפי רמה (41-60)
+      const bgIndex = ((this.currentLevel - 41) % 7) + 1;
+      const bgKey = `bg_crayon_${bgIndex}`;
+
+      if (this.textures.exists(bgKey)) {
+        // ציור אחד בלבד — קבוע במסך, ללא חפיפה וללא טשטוש
+        this.add.image(W / 2, H / 2, bgKey)
+          .setScrollFactor(0)
+          .setDepth(-12)
+          .setDisplaySize(W, H)
+          .setAlpha(0.92);
+
+        return;
+      }
+
+      // Fallback אם הציורים לא נטענו — צבעים שמחים
+      const crayonBg = this.add.graphics().setScrollFactor(0).setDepth(-12);
+      crayonBg.fillGradientStyle(0x87CEEB, 0xFF69B4, 0xFFFFAA, 0xADFF2F, 1);
+      crayonBg.fillRect(0, 0, W, H);
+      return;
+    }
 
     // ---- Real background images for Earth world ----
     if (this.worldKey === 'earth') {
@@ -584,59 +631,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   private createStaticPlatform(cfg: PlatformConfig, fill: number, top: number, passthrough = false): void {
-    const g = this.platformGfx; // shared — no new Graphics per platform
+    const g = this.platformGfx;
+    const x = cfg.x, y = cfg.y, w = cfg.width, h = cfg.height;
 
-    // === ISO-STYLE 3D BLOCK ===
-    // Bottom depth face — dark strip below body gives illusion of block thickness
-    const depthDark = Math.max(0x111111, fill - 0x3a3a3a);
-    g.fillStyle(depthDark, 1);
-    g.fillRect(cfg.x + 6, cfg.y + cfg.height, cfg.width - 6, 11);
+    this.drawWorldPlatform(g, x, y, w, h, fill, top, this.worldKey, passthrough, false);
 
-    // Right-edge depth face — dark right wall of the block
-    const sideDark = Math.max(0x111111, fill - 0x282828);
-    g.fillStyle(sideDark, 1);
-    g.fillRect(cfg.x + cfg.width, cfg.y + 7, 8, cfg.height + 5);
-
-    // Body (front face)
-    g.fillStyle(fill);
-    g.fillRect(cfg.x, cfg.y + 8, cfg.width, cfg.height - 8);
-
-    // Brick / stone texture on front face
-    const brickShade = Math.max(0, fill - 0x151515);
-    g.fillStyle(brickShade, 0.4);
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < Math.floor(cfg.width / 24); col++) {
-        const bx = cfg.x + col * 24 + (row % 2) * 12;
-        const by = cfg.y + 10 + row * 11;
-        if (bx + 22 < cfg.x + cfg.width) {
-          g.fillRoundedRect(bx + 1, by, 21, 9, 1);
-        }
-      }
-    }
-
-    // Top surface (the bright face you stand on)
-    g.fillStyle(top);
-    g.fillRoundedRect(cfg.x, cfg.y, cfg.width, 9, { tl: 4, tr: 4, bl: 0, br: 0 });
-
-    // Top highlight — thin bright shimmer line
-    g.fillStyle(0xFFFFFF, 0.20);
-    g.fillRect(cfg.x + 4, cfg.y + 1, cfg.width - 8, 3);
-
-    // Grass blade decoration on top surface
-    if (!this.levelData.isBoss) {
-      const bladeColor = Math.min(0xFFFFFF, top + 0x181818);
-      g.fillStyle(bladeColor);
-      for (let bx = cfg.x + 6; bx < cfg.x + cfg.width - 4; bx += 10) {
-        const h = 3 + Math.sin(bx * 0.4) * 2;
-        g.fillTriangle(bx, cfg.y, bx + 5, cfg.y, bx + 2, cfg.y - h);
-      }
-    }
-
-    // Physics (unchanged — body matches original rect)
-    const rect = this.add.rectangle(
-      cfg.x + cfg.width / 2, cfg.y + cfg.height / 2,
-      cfg.width, cfg.height
-    ).setVisible(false);
+    // פיזיקה
+    const rect = this.add.rectangle(x + w / 2, y + h / 2, w, h).setVisible(false);
     this.platforms.add(rect);
 
     if (passthrough) {
@@ -647,35 +648,281 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  // ============================================================
+  // WORLD PLATFORM RENDERER — גרפיקה עשירה לפי עולם
+  // ============================================================
+  private drawWorldPlatform(
+    g: Phaser.GameObjects.Graphics,
+    x: number, y: number, w: number, h: number,
+    fill: number, top: number,
+    world: string,
+    passthrough: boolean,
+    isMoving: boolean
+  ): void {
+
+    if (world === 'earth') {
+      // ── ארץ — אדמה חומה עם דשא ירוק עשיר ──
+      const soilDark  = 0x5C3D1E;
+      const soilMid   = 0x7A5230;
+      const soilLight = 0x8B6340;
+      const grassDark = 0x2D7A1F;
+      const grassMid  = 0x3EA82E;
+      const grassTop  = 0x5CCF3E;
+
+      // אדמה — שכבות צבע
+      g.fillStyle(soilDark);
+      g.fillRect(x, y + 10, w, h - 10);
+      g.fillStyle(soilMid);
+      g.fillRect(x + 2, y + 12, w - 4, h - 14);
+
+      // טקסטורת אדמה — אבנים קטנות
+      g.fillStyle(soilLight, 0.4);
+      for (let i = 0; i < Math.floor(w / 22); i++) {
+        const sx = x + 8 + i * 22 + (i % 2) * 6;
+        const sy = y + 16 + (i % 3) * 5;
+        g.fillEllipse(sx, sy, 10, 6);
+      }
+
+      // דשא — שכבות
+      g.fillStyle(grassDark);
+      g.fillRect(x, y + 2, w, 10);
+      g.fillStyle(grassMid);
+      g.fillRect(x, y, w, 8);
+
+      // גבעות דשא עגולות בחלק העליון
+      g.fillStyle(grassTop);
+      for (let i = 0; i < Math.floor(w / 10); i++) {
+        const bx = x + i * 10 + 3;
+        g.fillEllipse(bx, y - 1, 12, 7);
+      }
+
+      // פרחים קטנים
+      if (w > 80) {
+        const flowerColors = [0xFF4466, 0xFFDD00, 0xFF88CC];
+        for (let i = 0; i < Math.floor(w / 60); i++) {
+          const fx = x + 20 + i * 60;
+          const fc = flowerColors[i % 3];
+          g.fillStyle(fc);
+          g.fillCircle(fx, y - 4, 4);
+          g.fillStyle(0xFFFFFF, 0.6);
+          g.fillCircle(fx, y - 4, 2);
+          // גבעול
+          g.fillStyle(0x2D7A1F);
+          g.fillRect(fx - 1, y - 2, 2, 5);
+        }
+      }
+
+      // קו הדשא — outline כהה
+      g.lineStyle(1.5, 0x1A5C10, 0.8);
+      g.lineBetween(x, y, x + w, y);
+
+    } else if (world === 'water') {
+      // ── מים — סלע כהה ים עמוק עם אצות ואלמוגים ──
+      const rockDark  = 0x1A2A3A;
+      const rockMid   = 0x253545;
+      const rockLight = 0x304555;
+
+      // גוף סלע
+      g.fillStyle(rockDark);
+      g.fillRect(x, y, w, h);
+      g.fillStyle(rockMid);
+      g.fillRect(x + 2, y + 2, w - 4, h - 4);
+
+      // מרקם סלע — פצלים אורגניים
+      g.fillStyle(rockLight, 0.35);
+      for (let i = 0; i < Math.floor(w / 20); i++) {
+        g.fillEllipse(x + 8 + i * 20, y + h / 2 + (i % 2) * 4, 14, 8);
+      }
+
+      // קצה עליון מחוספס
+      g.fillStyle(0x2A3F55);
+      for (let i = 0; i < Math.floor(w / 12); i++) {
+        const rx = x + i * 12;
+        const rh = 3 + (i % 3) * 2;
+        g.fillRect(rx, y, 10, rh);
+      }
+
+      // אצות על הקצה
+      if (!passthrough && w > 60) {
+        for (let i = 0; i < Math.floor(w / 40); i++) {
+          const ax = x + 15 + i * 40;
+          g.fillStyle(0x00AA55, 0.9);
+          g.fillEllipse(ax,     y - 3, 5, 9);
+          g.fillStyle(0x00CC66, 0.7);
+          g.fillEllipse(ax + 3, y - 6, 4, 7);
+        }
+      }
+
+      // אלמוגים כתומים
+      if (w > 100) {
+        g.fillStyle(0xFF6633, 0.85);
+        g.fillCircle(x + w - 20, y - 2, 5);
+        g.fillCircle(x + w - 16, y - 5, 3);
+        g.fillStyle(0xFF44AA, 0.7);
+        g.fillCircle(x + 25, y - 3, 4);
+      }
+
+      // בועות מים
+      g.fillStyle(0xAADDFF, 0.4);
+      for (let i = 0; i < 3; i++) {
+        g.fillCircle(x + 12 + i * (w / 3), y - 4 - i * 2, 2.5);
+      }
+
+      g.lineStyle(1.5, 0x0D1A28, 0.9);
+      g.strokeRect(x, y, w, h);
+
+    } else if (world === 'sky') {
+      // ── שמיים — סלע מרחף עם ענן ושלג ──
+      const stoneBase  = 0x7A7A8A;
+      const stoneMid   = 0x9090A0;
+      const stoneLight = 0xAAAAAA;
+      const snowWhite  = 0xEEF4FF;
+
+      // גוף סלע אפור
+      g.fillStyle(stoneBase);
+      g.fillRect(x, y + 6, w, h - 6);
+
+      // מרקם אבן
+      g.fillStyle(stoneMid);
+      g.fillRect(x + 3, y + 8, w - 6, h - 10);
+
+      // אבנים בולטות
+      g.fillStyle(stoneLight, 0.4);
+      for (let i = 0; i < Math.floor(w / 18); i++) {
+        g.fillEllipse(x + 7 + i * 18, y + 12 + (i % 2) * 5, 12, 8);
+      }
+
+      // תחתית מחוספסת — סלע שנשבר
+      g.fillStyle(0x606070);
+      for (let i = 0; i < Math.floor(w / 14); i++) {
+        const bx = x + i * 14;
+        const bh = 4 + (i % 3) * 3;
+        g.fillTriangle(bx, y + h, bx + 7, y + h - bh, bx + 14, y + h);
+      }
+
+      // שלג/ענן בחלק העליון
+      g.fillStyle(snowWhite, 0.95);
+      g.fillRect(x, y, w, 8);
+      // גבעות שלג עגולות
+      for (let i = 0; i < Math.floor(w / 14); i++) {
+        g.fillEllipse(x + 5 + i * 14, y + 2, 16, 10);
+      }
+
+      // קצה ענן — נקודות לבנות בולטות
+      g.fillStyle(0xFFFFFF);
+      for (let i = 0; i < Math.floor(w / 20); i++) {
+        g.fillCircle(x + 8 + i * 20, y - 1, 5);
+      }
+
+      g.lineStyle(1, 0x555565, 0.6);
+      g.strokeRect(x, y + 6, w, h - 6);
+
+    } else if (world === 'space') {
+      // ── חלל — פלטפורמת מתכת עתידנית ──
+      const metalDark  = 0x1A1A2E;
+      const metalMid   = 0x252545;
+      const metalLight = 0x3535AA;
+      const neonBlue   = 0x00AAFF;
+      const neonPurple = 0xAA00FF;
+
+      // בסיס מתכת
+      g.fillStyle(metalDark);
+      g.fillRect(x, y, w, h);
+      g.fillStyle(metalMid);
+      g.fillRect(x + 2, y + 2, w - 4, h - 4);
+
+      // פסי מתכת אופקיים
+      g.fillStyle(metalLight, 0.3);
+      for (let i = 0; i < 3; i++) {
+        g.fillRect(x + 4, y + 3 + i * (h / 3), w - 8, 2);
+      }
+
+      // פס ניאון עליון
+      g.fillStyle(neonBlue, 0.9);
+      g.fillRect(x, y, w, 3);
+      // נקודות ניאון
+      for (let i = 0; i < Math.floor(w / 20); i++) {
+        const nx = x + 6 + i * 20;
+        g.fillStyle(i % 2 === 0 ? neonBlue : neonPurple, 0.85);
+        g.fillRect(nx, y, 8, 3);
+      }
+
+      // פינות מתכת — ריבטים
+      g.fillStyle(0x8888CC);
+      g.fillCircle(x + 4,     y + 4,     3);
+      g.fillCircle(x + w - 4, y + 4,     3);
+      g.fillCircle(x + 4,     y + h - 4, 3);
+      g.fillCircle(x + w - 4, y + h - 4, 3);
+
+      // קו ניאון תחתון
+      g.fillStyle(neonPurple, 0.6);
+      g.fillRect(x, y + h - 2, w, 2);
+
+      // זוהר תחתי
+      g.fillStyle(neonBlue, 0.08);
+      g.fillRect(x - 4, y + h, w + 8, 6);
+
+      g.lineStyle(1, neonBlue, 0.5);
+      g.strokeRect(x, y, w, h);
+
+    } else if (world === 'crayon') {
+      // ── ציורים — פלטפורמת עפרון צבעוני של ילד ──
+      const bodyColor = fill;
+      const topColor  = top;
+
+      // גוף פשוט עם קצוות "ילדותיים" — לא מושלם
+      g.fillStyle(bodyColor);
+      // קצוות לא מושלמים — מלבן עם offset קטן
+      g.fillRect(x + 2, y + 4, w - 3, h - 4);
+      g.fillRect(x,     y + 6, w,     h - 7);
+
+      // פס עליון צבעוני
+      g.fillStyle(topColor);
+      g.fillRect(x - 1, y,     w + 2, 7);
+      g.fillRect(x + 1, y + 1, w - 2, 5);
+
+      // קו עפרון — לא ישר בכוונה
+      g.lineStyle(2.5, 0x222222, 0.75);
+      // קו עליון עקום מעט
+      g.beginPath();
+      g.moveTo(x - 2, y + 1);
+      g.lineTo(x + w * 0.3, y - 1);
+      g.lineTo(x + w * 0.7, y + 2);
+      g.lineTo(x + w + 1,   y);
+      g.strokePath();
+
+      // כוכבים/לבבות קטנים לעיטור
+      if (w > 70) {
+        const decorColors = [0xFF4444, 0xFFDD00, 0xFF88FF, 0x44AAFF];
+        for (let i = 0; i < Math.min(3, Math.floor(w / 50)); i++) {
+          const dx = x + 18 + i * Math.floor(w / 3);
+          g.fillStyle(decorColors[i % 4]);
+          g.fillCircle(dx, y + h / 2 + 2, 5);
+        }
+      }
+
+    } else {
+      // ── ברירת מחדל ──
+      g.fillStyle(fill);
+      g.fillRect(x, y, w, h);
+      g.fillStyle(top);
+      g.fillRect(x, y, w, 6);
+      g.lineStyle(1, 0x000000, 0.2);
+      g.strokeRect(x, y, w, h);
+    }
+  }
+
+
   private createMovingPlatform(cfg: PlatformConfig, fill: number, top: number): void {
     const g = this.add.graphics().setDepth(2);
+    const w = cfg.width, h = cfg.height;
 
-    // === ISO-STYLE 3D BLOCK (moving) ===
-    // Bottom depth face
-    const depthDark = Math.max(0x111111, fill - 0x3a3a3a);
-    g.fillStyle(depthDark, 1);
-    g.fillRect(6, cfg.height, cfg.width - 6, 11);
+    // גרפיקה עשירה לפי עולם (מצב moving)
+    this.drawWorldPlatform(g, 0, 0, w, h, fill, top, this.worldKey, false, true);
 
-    // Right-edge depth face
-    const sideDark = Math.max(0x111111, fill - 0x282828);
-    g.fillStyle(sideDark, 1);
-    g.fillRect(cfg.width, 7, 8, cfg.height + 5);
-
-    // Body (front face)
-    g.fillStyle(fill);
-    g.fillRect(0, 8, cfg.width, cfg.height - 8);
-
-    // Top surface
-    g.fillStyle(top);
-    g.fillRoundedRect(0, 0, cfg.width, 9, { tl: 4, tr: 4, bl: 0, br: 0 });
-
-    // Top highlight
-    g.fillStyle(0xFFFFFF, 0.20);
-    g.fillRect(4, 1, cfg.width - 8, 3);
-
-    // Arrow indicator (signals this platform moves)
-    g.fillStyle(0xFFFFFF, 0.30);
-    g.fillTriangle(cfg.width/2 - 7, 15, cfg.width/2 + 7, 15, cfg.width/2, 8);
+    // אינדיקטור תנועה — חץ עדין
+    g.fillStyle(0xFFFFFF, 0.35);
+    g.fillTriangle(w/2 - 5, h/2 + 2, w/2 + 5, h/2 + 2, w/2, h/2 - 4);
 
     const plat = this.add.rectangle(
       cfg.x + cfg.width / 2, cfg.y + cfg.height / 2,
@@ -700,40 +947,29 @@ export class GameScene extends Phaser.Scene {
 
   private createCrumblingPlatform(cfg: PlatformConfig, fill: number, top: number): void {
     const g = this.add.graphics().setDepth(2);
+    const x = cfg.x, y = cfg.y, w = cfg.width, h = cfg.height;
 
-    // === ISO-STYLE 3D BLOCK (crumbling — red-tinted warning) ===
-    // Bottom depth face
-    const depthDark = Math.max(0x111111, fill - 0x3a3a3a);
-    g.fillStyle(depthDark, 1);
-    g.fillRect(cfg.x + 6, cfg.y + cfg.height, cfg.width - 6, 11);
+    // גרפיקה עשירה לפי עולם
+    this.drawWorldPlatform(g, x, y, w, h, fill, top, this.worldKey, false, false);
 
-    // Right-edge depth face
-    const sideDark = Math.max(0x111111, fill - 0x282828);
-    g.fillStyle(sideDark, 1);
-    g.fillRect(cfg.x + cfg.width, cfg.y + 7, 8, cfg.height + 5);
-
-    // Body (front face)
-    g.fillStyle(fill);
-    g.fillRect(cfg.x, cfg.y + 8, cfg.width, cfg.height - 8);
-
-    // Crack lines on the body
-    g.lineStyle(1.5, 0x000000, 0.38);
+    // סדקים — overlay על הגרפיקה הבסיסית
+    g.lineStyle(1.8, 0x000000, 0.5);
     for (let i = 1; i < 4; i++) {
-      const cx = cfg.x + (cfg.width / 4) * i;
-      g.lineBetween(cx - 4, cfg.y + 10, cx + 4, cfg.y + cfg.height - 2);
+      const cx = x + (w / 4) * i;
+      // סדק ראשי
+      g.lineBetween(cx, y + 2, cx + 4, y + h - 2);
+      // סדק משני קטן
+      g.lineBetween(cx + 2, y + 4, cx - 3, y + h / 2);
     }
 
-    // Top surface (red-tinted to signal danger)
-    g.fillStyle(top);
-    g.fillRoundedRect(cfg.x, cfg.y, cfg.width, 9, { tl: 4, tr: 4, bl: 0, br: 0 });
-
-    // Red danger tint on top
-    g.fillStyle(0xFF3333, 0.28);
-    g.fillRoundedRect(cfg.x + 2, cfg.y + 1, cfg.width - 4, 7, { tl: 4, tr: 4, bl: 0, br: 0 });
-
-    // Top highlight
-    g.fillStyle(0xFFFFFF, 0.15);
-    g.fillRect(cfg.x + 4, cfg.y + 1, cfg.width - 8, 3);
+    // אזהרה — פס אדום-כתום בהיר מעל
+    g.fillStyle(0xFF4400, 0.55);
+    g.fillRect(x, y, w, 4);
+    // נקודות אזהרה
+    for (let i = 0; i < Math.floor(w / 18); i++) {
+      g.fillStyle(i % 2 === 0 ? 0xFF2200 : 0xFFAA00, 0.7);
+      g.fillRect(x + 2 + i * 18, y, 10, 4);
+    }
 
     const rect = this.add.rectangle(
       cfg.x + cfg.width / 2, cfg.y + cfg.height / 2,
@@ -999,65 +1235,25 @@ export class GameScene extends Phaser.Scene {
   // ============================================================
 
   private spawnCoinBurst(x: number, y: number): void {
-    for (let i = 0; i < 7; i++) {
-      const p = this.add.graphics().setDepth(8);
-      p.fillStyle(0xFFD700);
-      p.fillCircle(0, 0, 3.5);
-      p.setPosition(x, y);
-      const a = Math.random() * Math.PI * 2;
-      const spd = 80 + Math.random() * 130;
-      this.tweens.add({
-        targets: p,
-        x: x + Math.cos(a) * spd * 0.6,
-        y: y + Math.sin(a) * spd * 0.6 - 30,
-        alpha: 0, scaleX: 0, scaleY: 0,
-        duration: 380 + Math.random() * 180, ease: 'Power2',
-        onComplete: () => p.destroy()
-      });
-    }
+    this.vfx?.spawnCoinBurst(x, y);
   }
 
   private spawnStompShockwave(bossX: number, bossY: number): void {
-    // Ground crack lines
-    for (let i = 0; i < 6; i++) {
-      const line = this.add.graphics().setDepth(4);
-      line.lineStyle(3, 0xFF4500, 0.8);
-      const angle = (i / 6) * Math.PI * 2;
-      const len = 60 + Math.random() * 80;
-      line.lineBetween(bossX, bossY, bossX + Math.cos(angle) * len, bossY + Math.sin(angle) * len * 0.3);
-      this.tweens.add({ targets: line, alpha: 0, duration: 700, onComplete: () => line.destroy() });
-    }
-    // Expanding ring
-    const ring = this.add.graphics().setDepth(4);
-    ring.lineStyle(4, 0xFF6F00, 0.9);
-    ring.strokeCircle(bossX, bossY, 10);
-    this.tweens.add({
-      targets: ring, scaleX: 6, scaleY: 1.5, alpha: 0,
-      duration: 600, ease: 'Power2', onComplete: () => ring.destroy()
-    });
+    this.vfx?.spawnStompShockwave(bossX, bossY);
   }
 
   private spawnDeathExplosion(x: number, y: number): void {
-    for (let i = 0; i < 20; i++) {
-      const p = this.add.graphics().setDepth(10);
-      const colors = [0xFF4500, 0xFFD700, 0xFF8C00, 0xFFFFFF, 0x78909C];
-      p.fillStyle(colors[Math.floor(Math.random() * colors.length)]);
-      const sz = 4 + Math.random() * 12;
-      p.fillRect(-sz/2, -sz/2, sz, sz);
-      p.setPosition(x + (Math.random() - 0.5) * 60, y - 60 + (Math.random() - 0.5) * 60);
-      const a = Math.random() * Math.PI * 2;
-      const spd = 200 + Math.random() * 400;
-      this.tweens.add({
-        targets: p,
-        x: p.x + Math.cos(a) * spd * 0.8,
-        y: p.y + Math.sin(a) * spd * 0.5 - 100,
-        alpha: 0, scaleX: 0.1, scaleY: 0.1, angle: Math.random() * 720,
-        duration: 800 + Math.random() * 600, ease: 'Power2',
-        onComplete: () => p.destroy()
+    this.vfx?.spawnEnemyDeath(x, y - 40);
+    // Extra big flash for boss death
+    this.cameras.main.flash(300, 255, 200, 100);
+    for (let i = 0; i < 3; i++) {
+      this.time.delayedCall(i * 150, () => {
+        this.vfx?.spawnEnemyDeath(
+          x + (Math.random() - 0.5) * 80,
+          y - 40 + (Math.random() - 0.5) * 60
+        );
       });
     }
-    // Screen flash
-    this.cameras.main.flash(300, 255, 200, 100);
   }
 
   private startAmbientParticles(): void {
@@ -1111,10 +1307,11 @@ export class GameScene extends Phaser.Scene {
     if (this.godMode) return;
     this.player.takeDamage(1);
     this.hudScene?.updateHealth(this.player.health, this.player.maxHealth);
-    this.cameras.main.shake(120, 0.006);
-    this.cameras.main.flash(80, 255, 50, 50);
+    this.hudScene?.flashDamage();
     this.comboCount = 0;
     this.comboTimer = 0;
+    // VFX: screen shake + red burst + stars
+    this.vfx?.spawnPlayerDamageEffect(this.player.x, this.player.y);
     if (this.player.isDead()) {
       this.time.delayedCall(700, () => this.restartLevel());
     }
@@ -1123,9 +1320,16 @@ export class GameScene extends Phaser.Scene {
   private registerKill(enemy: Enemy): void {
     this.comboCount++;
     this.comboTimer = 2.5;
+    // VFX: colorful enemy death explosion
+    this.vfx?.spawnEnemyDeath(enemy.x, enemy.y - 20);
     if (this.comboCount > 1) {
-      this.hudScene?.showMessage(`${this.comboCount}x COMBO!`, '#FF8C00', 900);
+      // VFX: combo burst text + stars
+      this.vfx?.spawnComboEffect(enemy.x, enemy.y - 50, this.comboCount);
+    } else {
+      this.hudScene?.showMessage('💥 HIT!', '#FFD700', 600);
     }
+    // Update combo bar in HUD
+    this.hudScene?.updateCombo(this.comboCount, this.comboTimer);
   }
 
   private completeLevel(): void {
@@ -1138,6 +1342,11 @@ export class GameScene extends Phaser.Scene {
     saveManager.completeLevel(this.currentLevel, this.coinsCollected, elapsed);
     this.hudScene?.showMessage('!כל הכבוד! 🎉', '#FFD700', 2500);
     this.cameras.main.flash(500, 255, 240, 100);
+    // VFX: fireworks celebration
+    this.vfx?.spawnLevelCompleteEffect(
+      this.scale.width / 2 + this.cameras.main.scrollX,
+      this.scale.height / 2
+    );
     this.time.delayedCall(2000, () => {
       const next = this.currentLevel + 1;
       if (next > 100) {
@@ -1180,13 +1389,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   private getWorldName(): string {
-    const names: Record<string, string> = { earth:'ארץ', water:'מים', sky:'שמיים', space:'חלל' };
-    return names[this.worldKey] ?? 'Earth';
+    const names: Record<string, string> = { earth:'ארץ', water:'מים', sky:'שמיים', space:'חלל', crayon:'ציורים' };
+    return names[this.worldKey] ?? this.worldKey;
   }
 
   private getWorldEmoji(): string {
-    const em: Record<string, string> = { earth:'🌍', water:'🌊', sky:'☁️', space:'🚀' };
-    return em[this.worldKey] ?? '🌍';
+    const em: Record<string, string> = { earth:'🌍', water:'🌊', sky:'☁️', space:'🚀', crayon:'🎨' };
+    return em[this.worldKey] ?? '🎨';
   }
 
   // ============================================================
@@ -1388,19 +1597,19 @@ export class GameScene extends Phaser.Scene {
       }
     }
 
-    // Dash trail
-    if (this.player.isDashing && Math.random() < 0.4) {
-      const t = this.add.graphics().setDepth(4).setAlpha(0.45);
-      t.fillStyle(0x00AAFF, 0.5);
-      t.fillRoundedRect(-16, -24, 32, 48, 4);
-      t.setPosition(this.player.x, this.player.y);
-      this.tweens.add({ targets: t, alpha: 0, scaleX: 0.5, duration: 180, onComplete: () => t.destroy() });
+    // Dash trail — VFX ghost effect
+    if (this.player.isDashing) {
+      this.vfx?.spawnDashTrail(this.player.x, this.player.y, this.player.facingRight, _time);
     }
 
     // Combo timer
     if (this.comboTimer > 0) {
       this.comboTimer -= dt;
-      if (this.comboTimer <= 0) this.comboCount = 0;
+      this.hudScene?.updateCombo(this.comboCount, this.comboTimer);
+      if (this.comboTimer <= 0) {
+        this.comboCount = 0;
+        this.hudScene?.updateCombo(0, 0);
+      }
     }
 
     // Fall death (skipped in god mode — player teleports back instead)

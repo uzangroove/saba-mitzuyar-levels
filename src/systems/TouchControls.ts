@@ -58,78 +58,78 @@ export class TouchControls {
 
     this.container = this.scene.add.container(0, 0).setDepth(100).setScrollFactor(0);
 
-    // ── Joystick (bottom-left) ──
-    const jx = 110, jy = H - 120;
+    // ── Joystick — שמאל, אמצע אנכי ──
+    const jx = 90, jy = H * 0.55;   // אמצע-שמאל
     this.joystickCenter = { x: jx, y: jy };
 
+    // בסיס שקוף מאוד
     this.joystickBase = this.scene.add.graphics();
-    this.joystickBase.fillStyle(0x000000, 0.25);
+    this.joystickBase.fillStyle(0xFFFFFF, 0.08);
     this.joystickBase.fillCircle(0, 0, this.joystickRadius + 10);
-    this.joystickBase.lineStyle(3, 0xFFFFFF, 0.35);
+    this.joystickBase.lineStyle(2, 0xFFFFFF, 0.2);
     this.joystickBase.strokeCircle(0, 0, this.joystickRadius + 10);
     this.joystickBase.setPosition(jx, jy);
 
-    this.joystickThumb = this.scene.add.graphics();
-    this.joystickThumb.fillStyle(0xFFFFFF, 0.7);
-    this.joystickThumb.fillCircle(0, 0, 28);
-    this.joystickThumb.lineStyle(3, 0xFFFFFF, 0.9);
-    this.joystickThumb.strokeCircle(0, 0, 28);
-    this.joystickThumb.setPosition(jx, jy);
-
-    // Directional arrows on base
+    // חצים שקופים
     const arrowGfx = this.scene.add.graphics();
-    arrowGfx.fillStyle(0xFFFFFF, 0.4);
-    // Left arrow
-    arrowGfx.fillTriangle(jx - 48, jy, jx - 35, jy - 10, jx - 35, jy + 10);
-    // Right arrow
-    arrowGfx.fillTriangle(jx + 48, jy, jx + 35, jy - 10, jx + 35, jy + 10);
+    arrowGfx.fillStyle(0xFFFFFF, 0.18);
+    arrowGfx.fillTriangle(jx - 50, jy, jx - 36, jy - 10, jx - 36, jy + 10);
+    arrowGfx.fillTriangle(jx + 50, jy, jx + 36, jy - 10, jx + 36, jy + 10);
+
+    // אגודל שקוף
+    this.joystickThumb = this.scene.add.graphics();
+    this.joystickThumb.fillStyle(0xFFFFFF, 0.35);
+    this.joystickThumb.fillCircle(0, 0, 26);
+    this.joystickThumb.lineStyle(2, 0xFFFFFF, 0.5);
+    this.joystickThumb.strokeCircle(0, 0, 26);
+    this.joystickThumb.setPosition(jx, jy);
 
     this.container.add([this.joystickBase, arrowGfx, this.joystickThumb]);
 
-    // ── Action Buttons (bottom-right) ──
-    const btnY = H - 100;
+    // ── כפתורי פעולה — שורה תחתונה, צד ימין ──
+    // מתחת לגבול המסך, אחד ליד השני
+    const btnY = H - 38;          // מרכז כפתורים — מתחת לגבול המשחק
+    const btnR = 30;               // רדיוס קטן יותר
     const btnConfigs = [
-      { id: 'jump',   x: W - 80,  y: btnY - 60, label: '↑',  color: 0x22CC55, size: 52 },
-      { id: 'hammer', x: W - 165, y: btnY,       label: '🔨', color: 0xFF6622, size: 48 },
-      { id: 'dash',   x: W - 80,  y: btnY + 30,  label: '💨', color: 0x2288FF, size: 48 },
+      { id: 'hammer', x: W - 210, y: btnY, label: '🔨', color: 0xFF6622 },
+      { id: 'dash',   x: W - 135, y: btnY, label: '💨', color: 0x2288FF },
+      { id: 'jump',   x: W - 55,  y: btnY, label: '↑',  color: 0x22CC55 },
     ];
 
     for (const cfg of btnConfigs) {
       const bg = this.scene.add.graphics();
-      bg.fillStyle(cfg.color, 0.75);
-      bg.fillCircle(0, 0, cfg.size / 2);
-      bg.lineStyle(3, 0xFFFFFF, 0.6);
-      bg.strokeCircle(0, 0, cfg.size / 2);
+      bg.fillStyle(cfg.color, 0.82);
+      bg.fillCircle(0, 0, btnR);
+      bg.lineStyle(2.5, 0xFFFFFF, 0.7);
+      bg.strokeCircle(0, 0, btnR);
       bg.setPosition(cfg.x, cfg.y);
       bg.setName(`btn_bg_${cfg.id}`);
 
       const label = this.scene.add.text(cfg.x, cfg.y, cfg.label, {
-        fontSize: '22px', color: '#FFFFFF',
+        fontSize: '20px', color: '#FFFFFF',
         stroke: '#000000', strokeThickness: 3,
       }).setOrigin(0.5).setName(`btn_lbl_${cfg.id}`);
 
       this.container.add([bg, label]);
     }
 
-    // ── Pause button (top-right) ──
+    // ── כפתור פאוז — פינה ימין עליון ──
     const pauseBg = this.scene.add.graphics();
-    pauseBg.fillStyle(0x000000, 0.4);
-    pauseBg.fillRoundedRect(0, 0, 52, 36, 10);
-    pauseBg.setPosition(W - 62, 10);
-
-    const pauseLbl = this.scene.add.text(W - 36, 28, '⏸', {
-      fontSize: '18px', color: '#FFFFFF'
+    pauseBg.fillStyle(0x000000, 0.35);
+    pauseBg.fillRoundedRect(0, 0, 44, 30, 8);
+    pauseBg.setPosition(W - 50, 8);
+    const pauseLbl = this.scene.add.text(W - 28, 23, '⏸', {
+      fontSize: '15px', color: '#FFFFFF'
     }).setOrigin(0.5);
 
-    // ── Skip Level button — center bottom, above buttons ──
+    // ── כפתור דלג — מתחת לגבול המשחק, מרכז שמאל ──
     const skipBg = this.scene.add.graphics();
-    skipBg.fillStyle(0xFF8800, 0.65);
-    skipBg.fillRoundedRect(0, 0, 90, 38, 12);
-    skipBg.setPosition(W / 2 - 45, H - 55);
-
-    const skipLbl = this.scene.add.text(W / 2, H - 36, '⏭ דלג', {
-      fontSize: '16px', color: '#FFFFFF',
-      stroke: '#000000', strokeThickness: 3,
+    skipBg.fillStyle(0xFF8800, 0.8);
+    skipBg.fillRoundedRect(0, 0, 80, 32, 10);
+    skipBg.setPosition(W / 2 - 130, H - 54);
+    const skipLbl = this.scene.add.text(W / 2 - 90, H - 38, '⏭ דלג', {
+      fontSize: '14px', color: '#FFFFFF',
+      stroke: '#000000', strokeThickness: 2,
     }).setOrigin(0.5);
 
     this.container.add([pauseBg, pauseLbl, skipBg, skipLbl]);
@@ -169,12 +169,13 @@ export class TouchControls {
     const H = this.scene.scale.height;
     const btnY = H - 100;
 
+    const btnY2 = H - 38;
     const buttons = [
-      { id: 'jump',    x: W - 80,  y: btnY - 60, r: 32 },
-      { id: 'hammer',  x: W - 165, y: btnY,       r: 30 },
-      { id: 'dash',    x: W - 80,  y: btnY + 30,  r: 30 },
-      { id: 'pause',   x: W - 36,  y: 28,         r: 24 },
-      { id: 'skip',    x: W / 2,   y: H - 36,     r: 40 },
+      { id: 'jump',    x: W - 55,  y: btnY2,  r: 34 },
+      { id: 'dash',    x: W - 135, y: btnY2,  r: 34 },
+      { id: 'hammer',  x: W - 210, y: btnY2,  r: 34 },
+      { id: 'pause',   x: W - 28,  y: 23,     r: 22 },
+      { id: 'skip',    x: W / 2 - 90, y: H - 38, r: 38 },
     ];
 
     for (const b of buttons) {
@@ -186,7 +187,7 @@ export class TouchControls {
 
   private hitJoystick(px: number, py: number): boolean {
     const jx = this.joystickCenter.x, jy = this.joystickCenter.y;
-    const r = this.joystickRadius + 30;
+    const r = this.joystickRadius + 50; // רדיוס touch גדול יותר
     return (px - jx) ** 2 + (py - jy) ** 2 <= r * r;
   }
 

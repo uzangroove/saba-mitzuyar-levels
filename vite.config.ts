@@ -8,8 +8,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 2000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          phaser: ['phaser'],
+        manualChunks: (id) => {
+          if (id.includes('phaser')) return 'phaser';
         },
       },
     },

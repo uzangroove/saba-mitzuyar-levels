@@ -5,6 +5,7 @@
 // ============================================================
 
 import Phaser from 'phaser';
+import { TouchControls, TouchState } from './TouchControls';
 
 export interface InputState {
   left: boolean;
@@ -38,6 +39,9 @@ export class InputManager {
     down: Phaser.Input.Keyboard.Key;
   };
 
+  // Touch controls
+  private touch: TouchControls | null = null;
+
   // Previous frame state for "just pressed" detection
   private prevJump = false;
   private prevDash = false;
@@ -49,6 +53,19 @@ export class InputManager {
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.setupKeyboard();
+    this.initTouch();
+  }
+
+  // Call this from GameScene.create() to activate touch UI
+  initTouch(): void {
+    this.touch = new TouchControls(this.scene);
+    this.touch.checkAndShow();
+    // Also show on any pointer event (for desktop testing)
+    this.scene.input.once('pointerdown', () => {
+      if (this.scene.sys.game.device.input.touch) {
+        this.touch?.show();
+      }
+    });
   }
 
   private setupKeyboard(): void {
@@ -117,21 +134,34 @@ export class InputManager {
     this.prevGpJump = gpJump;
     this.prevGpDash = gpDash;
 
+    // --- Touch ---
+    const ts: TouchState = this.touch?.getState() ?? {
+      left: false, right: false,
+      jump: false, jumpJustPressed: false,
+      dash: false, dashJustPressed: false,
+      hammer: false, hammerJustPressed: false,
+    };
+
     return {
-      left: kbLeft || gpLeft,
-      right: kbRight || gpRight,
-      up: kbUp || gpUp,
-      down: kbDown || gpDown,
-      jumpJustPressed,
-      jumpHeld: jump,
-      dash,
-      dashJustPressed,
-      hammer,
-      hammerJustPressed,
+      left:   kbLeft  || gpLeft  || ts.left,
+      right:  kbRight || gpRight || ts.right,
+      up:     kbUp    || gpUp    || ts.jump,
+      down:   kbDown  || gpDown,
+      jumpJustPressed:  jumpJustPressed  || ts.jumpJustPressed,
+      jumpHeld:         jump || ts.jump,
+      dash:             dash || ts.dash,
+      dashJustPressed:  dashJustPressed  || ts.dashJustPressed,
+      hammer:           hammer || ts.hammer,
+      hammerJustPressed: hammerJustPressed || ts.hammerJustPressed,
       pause,
       pauseJustPressed,
-      run: kbRun || gpRun,
-      interact: false, // TODO: add E key
+      run:      kbRun || gpRun,
+      interact: false,
     };
+  }
+
+  destroyTouch(): void {
+    this.touch?.destroy();
+    this.touch = null;
   }
 }

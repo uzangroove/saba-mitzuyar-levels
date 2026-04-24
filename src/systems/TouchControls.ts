@@ -121,7 +121,18 @@ export class TouchControls {
       fontSize: '18px', color: '#FFFFFF'
     }).setOrigin(0.5);
 
-    this.container.add([pauseBg, pauseLbl]);
+    // ── Skip Level button (top-center) ──
+    const skipBg = this.scene.add.graphics();
+    skipBg.fillStyle(0xFF8800, 0.55);
+    skipBg.fillRoundedRect(0, 0, 80, 34, 10);
+    skipBg.setPosition(W / 2 - 40, 10);
+
+    const skipLbl = this.scene.add.text(W / 2, 27, '⏭ דלג', {
+      fontSize: '14px', color: '#FFFFFF',
+      stroke: '#000000', strokeThickness: 2,
+    }).setOrigin(0.5);
+
+    this.container.add([pauseBg, pauseLbl, skipBg, skipLbl]);
 
     // ── Touch event listeners ──
     this.scene.input.on('pointerdown', this.onPointerDown, this);
@@ -163,6 +174,7 @@ export class TouchControls {
       { id: 'hammer',  x: W - 165, y: btnY,       r: 30 },
       { id: 'dash',    x: W - 80,  y: btnY + 30,  r: 30 },
       { id: 'pause',   x: W - 36,  y: 28,         r: 24 },
+      { id: 'skip',    x: W / 2,   y: 27,         r: 36 },
     ];
 
     for (const b of buttons) {
@@ -196,8 +208,11 @@ export class TouchControls {
     if (btn === 'dash'   && this.dashPointer   === null) { this.btnDash   = true; this.dashPointer   = pointer.id; this.flashButton('dash'); }
     if (btn === 'hammer' && this.hammerPointer === null) { this.btnHammer = true; this.hammerPointer = pointer.id; this.flashButton('hammer'); }
     if (btn === 'pause') {
-      // Emit pause event
       this.scene.events.emit('touch_pause');
+    }
+    if (btn === 'skip') {
+      // Simulate pressing 'O' key to skip level
+      this.scene.events.emit('touch_skip_level');
     }
   }
 

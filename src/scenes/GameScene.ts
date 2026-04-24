@@ -192,6 +192,11 @@ export class GameScene extends Phaser.Scene {
       this.completeLevel();
     });
 
+    // Touch skip button
+    this.events.on('touch_skip_level', () => {
+      this.completeLevel();
+    });
+
     // G key = toggle God Mode (no damage, unlimited lives)
     this.input.keyboard!.on('keydown-G', () => {
       this.godMode = !this.godMode;

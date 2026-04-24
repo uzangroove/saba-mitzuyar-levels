@@ -86,32 +86,39 @@ export class TouchControls {
 
     this.container.add([this.joystickBase, arrowGfx, this.joystickThumb]);
 
-    // ── כפתורי פעולה — שורה תחתונה, צד ימין ──
-    // מתחת לגבול המסך, אחד ליד השני
-    const btnY = H - 38;          // מרכז כפתורים — מתחת לגבול המשחק
-    const btnR = 30;               // רדיוס קטן יותר
+    // ── כפתורי פעולה — מלבנים שטוחים, שורה תחתונה מרכז-ימין ──
+    const btnH2 = 36, btnW2 = 68, btnGap = 6;
+    const btnY = H - 44;
+    // מרכז הקבוצה: בין הדלג (שמאל) לפאוז (ימין)
+    const groupCenterX = W * 0.62;
+    const totalW = btnW2 * 3 + btnGap * 2;
+    const btnStartX = groupCenterX - totalW / 2;
+
     const btnConfigs = [
-      { id: 'hammer', x: W - 210, y: btnY, label: '🔨', color: 0xFF6622 },
-      { id: 'dash',   x: W - 135, y: btnY, label: '💨', color: 0x2288FF },
-      { id: 'jump',   x: W - 55,  y: btnY, label: '↑',  color: 0x22CC55 },
+      { id: 'hammer', label: '🔨 פטיש', color: 0xFF6622 },
+      { id: 'dash',   label: '💨 דאש',  color: 0x2266DD },
+      { id: 'jump',   label: '↑ קפץ',   color: 0x22AA44 },
     ];
 
-    for (const cfg of btnConfigs) {
+    btnConfigs.forEach((cfg, i) => {
+      const bx = btnStartX + i * (btnW2 + btnGap);
+      const by = btnY - btnH2 / 2;
+
       const bg = this.scene.add.graphics();
-      bg.fillStyle(cfg.color, 0.82);
-      bg.fillCircle(0, 0, btnR);
-      bg.lineStyle(2.5, 0xFFFFFF, 0.7);
-      bg.strokeCircle(0, 0, btnR);
-      bg.setPosition(cfg.x, cfg.y);
+      bg.fillStyle(cfg.color, 0.78);
+      bg.fillRoundedRect(0, 0, btnW2, btnH2, 7);
+      bg.lineStyle(1.5, 0xFFFFFF, 0.55);
+      bg.strokeRoundedRect(0, 0, btnW2, btnH2, 7);
+      bg.setPosition(bx, by);
       bg.setName(`btn_bg_${cfg.id}`);
 
-      const label = this.scene.add.text(cfg.x, cfg.y, cfg.label, {
-        fontSize: '20px', color: '#FFFFFF',
-        stroke: '#000000', strokeThickness: 3,
+      const label = this.scene.add.text(bx + btnW2 / 2, btnY, cfg.label, {
+        fontSize: '13px', color: '#FFFFFF',
+        stroke: '#000000', strokeThickness: 2,
       }).setOrigin(0.5).setName(`btn_lbl_${cfg.id}`);
 
       this.container.add([bg, label]);
-    }
+    });
 
     // ── כפתור פאוז — פינה ימין עליון ──
     const pauseBg = this.scene.add.graphics();
@@ -169,13 +176,23 @@ export class TouchControls {
     const H = this.scene.scale.height;
     const btnY = H - 100;
 
-    const btnY2 = H - 38;
+    // Hit test for rectangular action buttons
+    const btnH2 = 36, btnW2 = 68, btnGap = 6;
+    const btnY2 = H - 44;
+    const groupCenterX = W * 0.62;
+    const totalBtnW = btnW2 * 3 + btnGap * 2;
+    const btnStartX2 = groupCenterX - totalBtnW / 2;
+    const btnIds = ['hammer', 'dash', 'jump'];
+    for (let i = 0; i < 3; i++) {
+      const bx = btnStartX2 + i * (btnW2 + btnGap);
+      const by = btnY2 - btnH2 / 2;
+      if (px >= bx && px <= bx + btnW2 && py >= by && py <= by + btnH2) {
+        return btnIds[i];
+      }
+    }
     const buttons = [
-      { id: 'jump',    x: W - 55,  y: btnY2,  r: 34 },
-      { id: 'dash',    x: W - 135, y: btnY2,  r: 34 },
-      { id: 'hammer',  x: W - 210, y: btnY2,  r: 34 },
-      { id: 'pause',   x: W - 28,  y: 23,     r: 22 },
-      { id: 'skip',    x: W / 2 - 90, y: H - 38, r: 38 },
+      { id: 'pause',   x: W - 28,       y: 23,      r: 22 },
+      { id: 'skip',    x: W / 2 - 90,   y: H - 38,  r: 38 },
     ];
 
     for (const b of buttons) {

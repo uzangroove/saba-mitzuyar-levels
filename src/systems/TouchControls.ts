@@ -121,15 +121,15 @@ export class TouchControls {
       fontSize: '18px', color: '#FFFFFF'
     }).setOrigin(0.5);
 
-    // ── Skip Level button (top-center) ──
+    // ── Skip Level button — center bottom, above buttons ──
     const skipBg = this.scene.add.graphics();
-    skipBg.fillStyle(0xFF8800, 0.55);
-    skipBg.fillRoundedRect(0, 0, 80, 34, 10);
-    skipBg.setPosition(W / 2 - 40, 10);
+    skipBg.fillStyle(0xFF8800, 0.65);
+    skipBg.fillRoundedRect(0, 0, 90, 38, 12);
+    skipBg.setPosition(W / 2 - 45, H - 55);
 
-    const skipLbl = this.scene.add.text(W / 2, 27, '⏭ דלג', {
-      fontSize: '14px', color: '#FFFFFF',
-      stroke: '#000000', strokeThickness: 2,
+    const skipLbl = this.scene.add.text(W / 2, H - 36, '⏭ דלג', {
+      fontSize: '16px', color: '#FFFFFF',
+      stroke: '#000000', strokeThickness: 3,
     }).setOrigin(0.5);
 
     this.container.add([pauseBg, pauseLbl, skipBg, skipLbl]);
@@ -174,7 +174,7 @@ export class TouchControls {
       { id: 'hammer',  x: W - 165, y: btnY,       r: 30 },
       { id: 'dash',    x: W - 80,  y: btnY + 30,  r: 30 },
       { id: 'pause',   x: W - 36,  y: 28,         r: 24 },
-      { id: 'skip',    x: W / 2,   y: 27,         r: 36 },
+      { id: 'skip',    x: W / 2,   y: H - 36,     r: 40 },
     ];
 
     for (const b of buttons) {

@@ -1407,6 +1407,8 @@ export class GameScene extends Phaser.Scene {
   // UPDATE
   // ============================================================
   update(_time: number, delta: number): void {
+    // Drive parallax scroll every frame — layers stay static without this
+    this.parallax?.update(0, delta);
     // ---- Pit detection — player falls below screen ----
     const pitThreshold = this.scale.height + 120;
     if (this.player && this.player.y > pitThreshold && !this.isTransitioning) {

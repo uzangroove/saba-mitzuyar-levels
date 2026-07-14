@@ -259,17 +259,31 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    // ---- EARTH WORLD — 6-layer parallax ----
+    // ---- EARTH WORLD — rich AI-generated backgrounds ----
     if (this.worldKey === 'earth') {
-      // If new layered assets exist, use them
-      // If ANY new layered asset exists, activate parallax
-      // (ParallaxBackground silently skips missing textures)
-      if (this.textures.exists('earth_hills') || this.textures.exists('earth_mountains')) {
-        this.parallax = new ParallaxBackground(this, worldWidth, EARTH_PARALLAX);
+      // Priority 1: new lush AI-generated scenes, rotated per level
+      const earthScenes = [
+        'earth_hills',
+        'earth_mountains',
+        'earth_trees_near',
+        'earth_trees_far',
+        'earth_clouds',
+        'earth_grass_fg',
+      ];
+      const availableScenes = earthScenes.filter(k => this.textures.exists(k));
+      if (availableScenes.length > 0) {
+        const bgKey = availableScenes[(this.currentLevel - 1) % availableScenes.length];
+        // Full-screen cover, static (scrollFactor 0 = attached to camera)
+        this.add.image(W / 2, H / 2, bgKey)
+          .setScrollFactor(0)
+          .setDepth(-20)
+          .setDisplaySize(W, H);
+        // Atmospheric particle drift — gives depth without extra images
+        this.spawnEarthParticles(W, H);
         this.buildLavaAndWaterEffects(worldWidth, W, H);
         return;
       }
-      // Fallback: old single-image mode (backward compatible)
+      // Priority 2: original bg_earth_*.jpg (backward compatible)
       const bgIndex = ((this.currentLevel - 1) % 3) + 1;
       const bgKey = `bg_earth_${bgIndex}`;
       if (this.textures.exists(bgKey)) {
@@ -567,6 +581,40 @@ export class GameScene extends Phaser.Scene {
       ease: 'Sine.easeInOut',
     });
   }
+
+  // Atmospheric floating pollen/dust particles for the Earth world.
+  // Uses a runtime-generated texture (no image asset needed) and drifts
+  // gently downward with a mild parallax feel. Cheap on GPU (< 25 particles).
+  private spawnEarthParticles(W: number, H: number): void {
+    const texKey = 'earth_pollen_dot';
+    if (!this.textures.exists(texKey)) {
+      const g = this.make.graphics({ x: 0, y: 0 });
+      // Soft warm dot with a subtle bright core
+      g.fillStyle(0xFFF8D6, 0.35);
+      g.fillCircle(8, 8, 8);
+      g.fillStyle(0xFFFFFF, 0.7);
+      g.fillCircle(8, 8, 3);
+      g.generateTexture(texKey, 16, 16);
+      g.destroy();
+    }
+
+    const emitter = this.add.particles(0, 0, texKey, {
+      x: { min: 0, max: W },
+      y: -20,
+      lifespan: { min: 7000, max: 11000 },
+      speedY: { min: 15, max: 35 },
+      speedX: { min: -20, max: 20 },
+      scale: { start: 0.3, end: 0.7, ease: 'Sine.easeOut' },
+      alpha: { start: 0, end: 0.75, ease: 'Cubic.easeIn' },
+      rotate: { start: 0, end: 360 },
+      quantity: 1,
+      frequency: 380,
+      blendMode: Phaser.BlendModes.ADD,
+    });
+    emitter.setDepth(-5);            // in front of bg, behind gameplay
+    emitter.setScrollFactor(0.7);    // slight parallax against camera pan
+  }
+
 
   private buildLavaAndWaterEffects(worldWidth: number, W: number, H: number): void {
     if (this.worldKey === 'water') {

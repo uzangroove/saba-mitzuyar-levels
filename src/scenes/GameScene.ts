@@ -1,7 +1,9 @@
 // ============================================================
 // scenes/GameScene.ts  — Core gameplay (Week 3: Boss support)
 // ============================================================
-
+```typescript
+import { ParallaxBackground, EARTH_PARALLAX } from '../systems/ParallaxBackground';
+```
 import Phaser from 'phaser';
 import { Player } from '../entities/Player';
 import { bakeEnemyTextures } from '../entities/EnemyRenderer';

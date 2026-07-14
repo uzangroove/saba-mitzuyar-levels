@@ -11,6 +11,10 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
+    // Get canvas dimensions
+    const W = this.scale.width;
+    const H = this.scale.height;
+
     // Earth parallax — 6 layers + clouds
     const earthLayers = [
       'earth_sky',

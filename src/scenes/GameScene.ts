@@ -262,7 +262,9 @@ export class GameScene extends Phaser.Scene {
     // ---- EARTH WORLD — 6-layer parallax ----
     if (this.worldKey === 'earth') {
       // If new layered assets exist, use them
-      if (this.textures.exists('earth_sky') && this.textures.exists('earth_hills')) {
+      // If ANY new layered asset exists, activate parallax
+      // (ParallaxBackground silently skips missing textures)
+      if (this.textures.exists('earth_hills') || this.textures.exists('earth_mountains')) {
         this.parallax = new ParallaxBackground(this, worldWidth, EARTH_PARALLAX);
         this.buildLavaAndWaterEffects(worldWidth, W, H);
         return;

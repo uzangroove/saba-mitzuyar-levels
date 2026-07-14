@@ -10,23 +10,20 @@ export class BootScene extends Phaser.Scene {
     super({ key: 'BootScene' });
   }
 
- `preload()`:
-
-```typescript
-// Earth parallax — 6 layers + clouds
-const earthLayers = [
-  'earth_sky',
-  'earth_clouds',
-  'earth_mountains',
-  'earth_hills',
-  'earth_trees_far',
-  'earth_trees_near',
-  'earth_grass_fg',
-];
-for (const key of earthLayers) {
-  this.load.image(key, `assets/backgrounds/earth/${key}.png`);
-}
-```
+  preload(): void {
+    // Earth parallax — 6 layers + clouds
+    const earthLayers = [
+      'earth_sky',
+      'earth_clouds',
+      'earth_mountains',
+      'earth_hills',
+      'earth_trees_far',
+      'earth_trees_near',
+      'earth_grass_fg',
+    ];
+    for (const key of earthLayers) {
+      this.load.image(key, `assets/backgrounds/earth/${key}.png`);
+    }
 
     // ---- Loading screen ----
     const bg = this.add.graphics();

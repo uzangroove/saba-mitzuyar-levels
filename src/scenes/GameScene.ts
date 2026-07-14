@@ -258,22 +258,26 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    // ---- Real background images for Earth world ----
-    if (this.worldKey === 'earth') {
-      // Rotate 3 backgrounds: level 1→bg1, 2→bg2, 3→bg3, 4→bg1, etc.
-      const bgIndex = ((this.currentLevel - 1) % 3) + 1;
-      const bgKey = `bg_earth_${bgIndex}`;
-      if (this.textures.exists(bgKey)) {
-        // Just ONE image — background is complete
-        this.add.image(W/2, H/2, bgKey)
-          .setScrollFactor(0)
-          .setDepth(-10)
-          .setDisplaySize(W, H);
-
-        this.buildLavaAndWaterEffects(worldWidth, W, H);
-        return;
-      }
-    }
+   ```typescript
+// ---- EARTH WORLD — 6-layer parallax ----
+if (this.worldKey === 'earth') {
+  // If new layered assets exist, use them
+  if (this.textures.exists('earth_sky') && this.textures.exists('earth_hills')) {
+    this.parallax = new ParallaxBackground(this, worldWidth, EARTH_PARALLAX);
+    this.buildLavaAndWaterEffects(worldWidth, W, H);
+    return;
+  }
+  // Fallback: old single-image mode (backward compatible)
+  const bgIndex = ((this.currentLevel - 1) % 3) + 1;
+  const bgKey = `bg_earth_${bgIndex}`;
+  if (this.textures.exists(bgKey)) {
+    this.add.image(W/2, H/2, bgKey)
+      .setScrollFactor(0).setDepth(-10).setDisplaySize(W, H);
+    this.buildLavaAndWaterEffects(worldWidth, W, H);
+    return;
+  }
+}
+```
 
     // Bake entire background into ONE RenderTexture → 1 draw call, no per-frame cost
     const bgCacheKey = `bg_proc_${this.worldKey}_${this.levelData.paletteName}`;

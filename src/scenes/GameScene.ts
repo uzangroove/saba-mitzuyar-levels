@@ -1,9 +1,7 @@
 // ============================================================
 // scenes/GameScene.ts  — Core gameplay (Week 3: Boss support)
 // ============================================================
-```typescript
 import { ParallaxBackground, EARTH_PARALLAX } from '../systems/ParallaxBackground';
-```
 import Phaser from 'phaser';
 import { Player } from '../entities/Player';
 import { bakeEnemyTextures } from '../entities/EnemyRenderer';
@@ -31,6 +29,9 @@ export class GameScene extends Phaser.Scene {
   private player!: Player;
   private enemies: Enemy[] = [];
   private boss: Boss | null = null;
+
+  // Parallax background (optional)
+  private parallax?: ParallaxBackground;
 
   // Groups
   private platforms!: Phaser.Physics.Arcade.StaticGroup;
@@ -258,26 +259,24 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-   ```typescript
-// ---- EARTH WORLD — 6-layer parallax ----
-if (this.worldKey === 'earth') {
-  // If new layered assets exist, use them
-  if (this.textures.exists('earth_sky') && this.textures.exists('earth_hills')) {
-    this.parallax = new ParallaxBackground(this, worldWidth, EARTH_PARALLAX);
-    this.buildLavaAndWaterEffects(worldWidth, W, H);
-    return;
-  }
-  // Fallback: old single-image mode (backward compatible)
-  const bgIndex = ((this.currentLevel - 1) % 3) + 1;
-  const bgKey = `bg_earth_${bgIndex}`;
-  if (this.textures.exists(bgKey)) {
-    this.add.image(W/2, H/2, bgKey)
-      .setScrollFactor(0).setDepth(-10).setDisplaySize(W, H);
-    this.buildLavaAndWaterEffects(worldWidth, W, H);
-    return;
-  }
-}
-```
+    // ---- EARTH WORLD — 6-layer parallax ----
+    if (this.worldKey === 'earth') {
+      // If new layered assets exist, use them
+      if (this.textures.exists('earth_sky') && this.textures.exists('earth_hills')) {
+        this.parallax = new ParallaxBackground(this, worldWidth, EARTH_PARALLAX);
+        this.buildLavaAndWaterEffects(worldWidth, W, H);
+        return;
+      }
+      // Fallback: old single-image mode (backward compatible)
+      const bgIndex = ((this.currentLevel - 1) % 3) + 1;
+      const bgKey = `bg_earth_${bgIndex}`;
+      if (this.textures.exists(bgKey)) {
+        this.add.image(W/2, H/2, bgKey)
+          .setScrollFactor(0).setDepth(-10).setDisplaySize(W, H);
+        this.buildLavaAndWaterEffects(worldWidth, W, H);
+        return;
+      }
+    }
 
     // Bake entire background into ONE RenderTexture → 1 draw call, no per-frame cost
     const bgCacheKey = `bg_proc_${this.worldKey}_${this.levelData.paletteName}`;
@@ -593,7 +592,6 @@ if (this.worldKey === 'earth') {
   // ============================================================
   // LEVEL LOADING
   // ============================================================
-
   private loadLevel(ld: LevelData): void {
     const palette = PALETTES[ld.paletteName] ?? PALETTES['DAY'];
     const toHex = (s: string) => parseInt(s.replace('#', ''), 16);
@@ -1126,7 +1124,6 @@ if (this.worldKey === 'earth') {
   // ============================================================
   // BOSS SPAWN
   // ============================================================
-
   private spawnBoss(ld: LevelData): void {
     const bossX = Math.floor((ld.goalX + ld.spawnPoint.x) / 2);
     const bossY = ld.spawnPoint.y;
@@ -1166,7 +1163,6 @@ if (this.worldKey === 'earth') {
   // ============================================================
   // COLLISIONS
   // ============================================================
-
   private setupCollisions(): void {
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.movingPlatforms);
@@ -1244,7 +1240,6 @@ if (this.worldKey === 'earth') {
   // ============================================================
   // PARTICLE EFFECTS
   // ============================================================
-
   private spawnCoinBurst(x: number, y: number): void {
     this.vfx?.spawnCoinBurst(x, y);
   }
@@ -1313,7 +1308,6 @@ if (this.worldKey === 'earth') {
   // ============================================================
   // GAME LOGIC
   // ============================================================
-
   private playerTakeDamage(): void {
     if (this.godMode) return;
     this.player.takeDamage(1);
@@ -1412,7 +1406,6 @@ if (this.worldKey === 'earth') {
   // ============================================================
   // UPDATE
   // ============================================================
-
   update(_time: number, delta: number): void {
     // ---- Pit detection — player falls below screen ----
     const pitThreshold = this.scale.height + 120;

@@ -132,58 +132,58 @@ export class ParallaxBackground {
 // ============================================================
 
 export const EARTH_PARALLAX: ParallaxLayer[] = [
-  {
-    key: 'earth_sky',
-    scrollFactor: 0.0,
-    depth: -20,
-    yAnchor: 0,       // fills from top
-    yOffset: 0,
-  },
+  // Clouds — anchored to TOP of screen, drift slowly on their own
   {
     key: 'earth_clouds',
-    scrollFactor: 0.05,
+    scrollFactor: 0.08,
     depth: -19,
-    yAnchor: 0,
-    yOffset: 40,
+    yAnchor: 0,        // top-anchored (clouds are at top of the image)
+    yOffset: 0,
     alpha: 0.85,
-    driftX: 8,        // clouds drift slowly on their own
+    driftX: 10,
   },
+  // Mountains — very slow, far in the distance
   {
     key: 'earth_mountains',
-    scrollFactor: 0.15,
+    scrollFactor: 0.18,
     depth: -18,
-    yAnchor: 1,       // bottom-anchored
-    yOffset: -180,    // lifted above bottom
-    alpha: 0.9,
+    yAnchor: 1,        // bottom-anchored so terrain sits at screen bottom
+    yOffset: 0,
+    alpha: 0.85,
   },
+  // Hills — mid-distance
   {
     key: 'earth_hills',
-    scrollFactor: 0.35,
+    scrollFactor: 0.38,
     depth: -16,
     yAnchor: 1,
-    yOffset: -100,
+    yOffset: 0,
   },
+  // Trees far — closer than hills
   {
     key: 'earth_trees_far',
-    scrollFactor: 0.55,
+    scrollFactor: 0.62,
     depth: -14,
     yAnchor: 1,
-    yOffset: -50,
+    yOffset: 0,
     alpha: 0.95,
   },
+  // Trees near — even closer
   {
     key: 'earth_trees_near',
-    scrollFactor: 0.85,
+    scrollFactor: 0.90,
     depth: -12,
     yAnchor: 1,
-    yOffset: -20,
+    yOffset: 0,
+    alpha: 0.9,
   },
+  // Grass foreground — moves FASTER than camera (signature parallax effect)
   {
     key: 'earth_grass_fg',
-    scrollFactor: 1.15,   // >1.0 = foreground!
-    depth: 100,           // in front of everything except HUD
+    scrollFactor: 1.20,
+    depth: 100,        // in front of gameplay
     yAnchor: 1,
-    yOffset: 10,
-    alpha: 0.9,
+    yOffset: 0,
+    alpha: 0.85,
   },
 ];

@@ -259,31 +259,31 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    // ---- EARTH WORLD — rich AI-generated backgrounds ----
+    // ---- EARTH WORLD — real 6-layer parallax with proper transparent PNGs ----
     if (this.worldKey === 'earth') {
-      // Priority 1: new lush AI-generated scenes, rotated per level
-      const earthScenes = [
-        'earth_hills',
-        'earth_mountains',
-        'earth_trees_near',
-        'earth_trees_far',
-        'earth_clouds',
-        'earth_grass_fg',
-      ];
-      const availableScenes = earthScenes.filter(k => this.textures.exists(k));
-      if (availableScenes.length > 0) {
-        const bgKey = availableScenes[(this.currentLevel - 1) % availableScenes.length];
-        // Full-screen cover, static (scrollFactor 0 = attached to camera)
-        this.add.image(W / 2, H / 2, bgKey)
-          .setScrollFactor(0)
-          .setDepth(-20)
-          .setDisplaySize(W, H);
-        // Atmospheric particle drift — gives depth without extra images
+      const hasParallaxAssets = this.textures.exists('earth_hills')
+        || this.textures.exists('earth_mountains');
+      if (hasParallaxAssets) {
+        // Programmatic sky gradient behind all layers (replaces missing earth_sky.png).
+        // Warm peach → gold gradient. Cached as a texture so it's a single draw call.
+        const skyCacheKey = 'earth_sky_gradient';
+        if (!this.textures.exists(skyCacheKey)) {
+          const g = this.add.graphics();
+          g.fillGradientStyle(0xFFE4B5, 0xFFE4B5, 0xFFCC88, 0xFFCC88, 1);
+          g.fillRect(0, 0, W, H);
+          g.generateTexture(skyCacheKey, W, H);
+          g.destroy();
+        }
+        this.add.image(W/2, H/2, skyCacheKey)
+          .setScrollFactor(0).setDepth(-25);
+        // Fire up the real parallax now that layers have transparency
+        this.parallax = new ParallaxBackground(this, worldWidth, EARTH_PARALLAX);
+        // Warm floating pollen particles for extra atmosphere
         this.spawnEarthParticles(W, H);
         this.buildLavaAndWaterEffects(worldWidth, W, H);
         return;
       }
-      // Priority 2: original bg_earth_*.jpg (backward compatible)
+      // Fallback: original bg_earth_*.jpg (backward compatible)
       const bgIndex = ((this.currentLevel - 1) % 3) + 1;
       const bgKey = `bg_earth_${bgIndex}`;
       if (this.textures.exists(bgKey)) {

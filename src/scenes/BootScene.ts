@@ -15,9 +15,8 @@ export class BootScene extends Phaser.Scene {
     const W = this.scale.width;
     const H = this.scale.height;
 
-    // Earth parallax — 6 layers + clouds
+    // Earth parallax — 6 transparent layers (sky is drawn programmatically)
     const earthLayers = [
-      'earth_sky',
       'earth_clouds',
       'earth_mountains',
       'earth_hills',
